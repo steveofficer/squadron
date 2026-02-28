@@ -26,6 +26,7 @@ You will receive:
 - Clarify the expected outcome for each acceptance criterion
 
 ## 2. Research the Codebase
+- Read the `project-technology` skill to understand the tech stack, language idioms, frameworks, and coding conventions for this project
 - Search for relevant files, patterns, and conventions
 - Read existing code that will be modified or extended
 - Identify dependencies, data models, interfaces, and abstractions

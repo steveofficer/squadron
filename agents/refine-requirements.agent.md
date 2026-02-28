@@ -21,7 +21,7 @@ Invoke this agent when you have a feature request, specification, bug report, or
 
 1. Read the user's specification or feature request carefully
 2. Research the existing codebase to understand:
-   - The project's technology stack, architecture, and structure
+   - The project's technology stack, architecture, and structure — read the `project-technology` skill for the authoritative tech stack reference
    - Existing patterns, conventions, and coding standards
    - Related features or modules that may be affected by the change
    - Existing tests, documentation, and configuration

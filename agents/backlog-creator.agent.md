@@ -25,6 +25,7 @@ You will receive a refined specification that has already been analyzed and clar
   - Where new code could be placed
   - Existing patterns to follow
   - Dependencies that will be affected
+  - Read the `project-technology` skill for the tech stack, frameworks, and conventions that will constrain implementation choices
 
 ## 2. Decompose into Tasks
 

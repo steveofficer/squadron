@@ -144,6 +144,9 @@ Defines the schema, file format, naming conventions, and lifecycle rules for the
 ### Commit to Git
 Defines commit message formatting ([Conventional Commits](https://www.conventionalcommits.org/)), branch naming conventions, and commit scope guidelines. Used by the Task Dispatcher when committing completed work.
 
+### Project Technology
+A project-specific template that you populate with your tech stack: language and runtime, frameworks and libraries, testing tools and commands, build tooling, and key coding conventions. Agents read this skill to write idiomatic code, choose the correct testing framework, and follow project-specific rules. **Populate this file after installing Squadron** to ensure agents produce code that fits your project.
+
 ### Review Findings
 Defines the standard report format for all reviewer agents. Specifies severity profiles for each reviewer type (Strict, Reasonable, Lenient) and the mandatory recommendation line (`PASS` / `REWORK NEEDED`) that the Code Reviewer uses to synthesise findings consistently.
 

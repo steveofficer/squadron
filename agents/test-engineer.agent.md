@@ -22,7 +22,7 @@ You will receive:
 ## 1. Understand the Requirements
 - Read the task description and acceptance criteria
 - Review the implementation changes to understand what was built
-- Identify the testing framework, conventions, and directory structure used in the project
+- Read the `project-technology` skill to identify the testing framework, test runner, and test conventions for this project
 
 ## 2. Design Test Cases
 Map each acceptance criterion to one or more test cases, then identify additional scenarios:
