@@ -1,4 +1,3 @@
-````skill
 ---
 name: review-findings
 description: Defines the standard format for reporting code review findings. All reviewer agents must follow this structure to ensure the Code Reviewer can synthesize findings consistently.
@@ -94,4 +93,3 @@ Every report must end with exactly one of:
 - `Recommendation: REWORK NEEDED`
 
 This line is parsed by the Code Reviewer to determine the per-reviewer verdict. Do not omit it.
-````

@@ -14,7 +14,7 @@ GitHub Copilot works differently. Copilot bills by **Premium Request** — each 
 
 **Squadron is designed from the ground up around this billing model.** Its defining characteristic is minimizing the number of model invocations. It achieves this by:
 
-- **Using Copilot's native `subAgent` feature** to delegate work to background agents that run outside your active request context
+- **Using Copilot's native `agent` tool** to delegate work to background agents that run outside your active request context
 - **Batching work into large, autonomous tasks** rather than small iterative steps that each require a separate request
 - **Giving agents deep, complete context upfront** so they can complete work in a single pass without back-and-forth clarification
 
@@ -23,7 +23,7 @@ If you are using GitHub Copilot and paying per Premium Request, Squadron is buil
 ## Getting Started
 
 1. Open your project in VS Code with GitHub Copilot enabled
-2. Copy the `agents/` and `skills/` directories into your project's `.github/` directory
+2. Run `npx squadron` in your project directory to install the agents and skills into `.github/agents/` and `.github/skills/`
 3. Invoke the **Refine Requirements** agent with your specification to begin
 
 ## The Workflow
@@ -142,6 +142,9 @@ Defines the schema, file format, naming conventions, and lifecycle rules for the
 ### Commit to Git
 Defines commit message formatting ([Conventional Commits](https://www.conventionalcommits.org/)), branch naming conventions, and commit scope guidelines. Used by the Task Dispatcher when committing completed work.
 
+### Review Findings
+Defines the standard report format for all reviewer agents. Specifies severity profiles for each reviewer type (Strict, Reasonable, Lenient) and the mandatory recommendation line (`PASS` / `REWORK NEEDED`) that the Code Reviewer uses to synthesise findings consistently.
+
 ## Design Principles
 
 - **Specialization**: each agent has one job and does it well
@@ -149,4 +152,4 @@ Defines commit message formatting ([Conventional Commits](https://www.convention
 - **Quality gates**: every task passes acceptance testing before completion
 - **Human oversight**: humans review requirements and the backlog before implementation begins
 - **Context efficiency**: sub-agents receive only the context they need, keeping context windows small
-- **Cost optimization**: work is delegated to specialized sub-agents via `runSubagent`, minimizing token usage per Premium Request
+- **Cost optimization**: work is delegated to specialized sub-agents via the `agent` tool, minimizing token usage per Premium Request

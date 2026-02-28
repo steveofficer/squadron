@@ -31,6 +31,13 @@ Invoke this agent after the **Refine Requirements** agent has created a backlog.
 
 For each selected task, execute the following cycle. Track the current iteration number starting at 1.
 
+### Step 0: Create Feature Branch
+Create a feature branch for this task following the `commit-to-git` skill branch naming convention:
+```
+<type>/<task-id>
+```
+For example: `feat/003-add-token-refresh`. Check out this branch before delegating to the Backend Engineer.
+
 ### Step 1: Implement
 Invoke the **Backend Engineer** agent with a focused prompt containing:
 - The full task description and acceptance criteria
