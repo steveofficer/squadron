@@ -37,11 +37,7 @@ function isEmptyDir(dir) {
 }
 
 function isGitRepo(dir) {
-  try {
-    return fs.existsSync(path.join(dir, '.git'));
-  } catch {
-    return false;
-  }
+  return fs.existsSync(path.join(dir, '.git'));
 }
 
 function detectTargetDir() {
@@ -94,42 +90,26 @@ async function main() {
 
   const { suggestion, reason } = detectTargetDir();
 
-  let targetDir;
-
   if (suggestion) {
     log.info(`Detected ${pc.bold(reason)} at ${pc.dim(suggestion)}`);
-
-    const dir = await text({
-      message: 'Where should Squadron be installed?',
-      placeholder: suggestion,
-      defaultValue: suggestion,
-      validate(value) {
-        if (!value || value.trim().length === 0) return 'Please enter a directory path.';
-      },
-    });
-
-    if (isCancel(dir)) {
-      cancel('Installation cancelled.');
-      process.exit(0);
-    }
-
-    targetDir = dir;
-  } else {
-    const dir = await text({
-      message: 'Where should Squadron be installed?',
-      placeholder: '/path/to/your/project',
-      validate(value) {
-        if (!value || value.trim().length === 0) return 'Please enter a directory path.';
-      },
-    });
-
-    if (isCancel(dir)) {
-      cancel('Installation cancelled.');
-      process.exit(0);
-    }
-
-    targetDir = dir;
   }
+
+  const dir = await text({
+    message: 'Where should Squadron be installed?',
+    placeholder: suggestion ?? '/path/to/your/project',
+    ...(suggestion ? { defaultValue: suggestion } : {}),
+    validate(value) {
+      if (suggestion && (!value || value.trim().length === 0)) return;
+      if (!value || value.trim().length === 0) return 'Please enter a directory path.';
+    },
+  });
+
+  if (isCancel(dir)) {
+    cancel('Installation cancelled.');
+    process.exit(0);
+  }
+
+  let targetDir = dir;
 
   // Resolve path
   targetDir = path.resolve(targetDir);
@@ -157,7 +137,7 @@ async function main() {
   if (agentsExist || skillsExist) {
     const existing = [agentsExist && '.github/agents', skillsExist && '.github/skills'].filter(Boolean).join(' and ');
     const shouldOverwrite = await confirm({
-      message: `${pc.yellow(existing)} already exists. Overwrite?`,
+      message: `${pc.yellow(existing)} already ${agentsExist && skillsExist ? 'exist' : 'exists'}. Overwrite?`,
     });
 
     if (isCancel(shouldOverwrite) || !shouldOverwrite) {
@@ -173,25 +153,26 @@ async function main() {
   const agentsSrc = path.join(__dirname, 'agents');
   const skillsSrc = path.join(__dirname, 'skills');
 
-  // Small delay for dramatic effect
-  await new Promise((r) => setTimeout(r, 800));
+  try {
+    copyDirRecursive(agentsSrc, agentsDest);
+    copyDirRecursive(skillsSrc, skillsDest);
 
-  copyDirRecursive(agentsSrc, agentsDest);
-  copyDirRecursive(skillsSrc, skillsDest);
+    const agentCount = countFiles(agentsDest);
+    const skillCount = countFiles(skillsDest);
 
-  const agentCount = countFiles(agentsSrc);
-  const skillCount = countFiles(skillsSrc);
+    s.stop('Squadron installed successfully!');
 
-  await new Promise((r) => setTimeout(r, 400));
-  s.stop('Squadron installed successfully!');
-
-  log.success(`${pc.bold(agentCount)} agents → ${pc.dim(path.relative(process.cwd(), agentsDest) || agentsDest)}`);
-  log.success(`${pc.bold(skillCount)} skills → ${pc.dim(path.relative(process.cwd(), skillsDest) || skillsDest)}`);
+    log.success(`${pc.bold(agentCount)} agents → ${pc.dim(path.relative(process.cwd(), agentsDest) || agentsDest)}`);
+    log.success(`${pc.bold(skillCount)} skills → ${pc.dim(path.relative(process.cwd(), skillsDest) || skillsDest)}`);
+  } catch (err) {
+    s.stop('Installation failed.');
+    throw err;
+  }
 
   outro(pc.bold(pc.green('✈  Squadron cleared for takeoff!')));
 }
 
 main().catch((err) => {
-  console.error(pc.red('Error:'), err.message);
+  console.error(pc.red('Error:'), err instanceof Error ? err.message : String(err));
   process.exit(1);
 });
