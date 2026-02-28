@@ -6,6 +6,8 @@ It provides a team of autonomous, specialized agents that take a specification f
 
 Humans provide the vision. Agents provide the implementation.
 
+![Mascot logo of a fleet of jets each with their own special function](/mascot.png)
+
 ## Why Squadron Exists
 
 Most agentic coding suites are designed for platforms with token-based billing. On those platforms, every optimization is measured in tokens: prompts are compressed, context windows are trimmed, and output is kept terse — because tokens are the unit of cost.
