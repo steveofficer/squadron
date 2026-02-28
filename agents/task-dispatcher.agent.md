@@ -19,12 +19,12 @@ Invoke this agent after the **Refine Requirements** agent has created a backlog.
 
 ## Phase 1: Assess the Backlog
 
-1. Read all task files in the `backlog/` directory
-2. Read `backlog/README.md` for the task overview
-3. Identify tasks with status `pending` whose dependencies are all `completed`
-4. Select the next task based on:
-   - Dependency order (prerequisites first)
+1. Use `grep_search` with pattern `^pending$` and `includePattern` set to `backlog/active/*.md` to find pending tasks
+2. For each pending task, verify its dependencies are completed by checking for the dependency file in `backlog/completed/` using `file_search`
+3. Select the next task based on:
+   - Dependency order (prerequisites first — all dependencies must exist in `backlog/completed/`)
    - Priority (high → medium → low)
+4. Read the selected task file in full to get implementation details
 5. Track your progress using the todo list for visibility
 
 ## Phase 2: Implementation Cycle
@@ -77,7 +77,10 @@ Invoke the **Technical Writer** agent with:
 - Update the task's backlog file:
   - Set status to `completed`
   - Populate the `## Implementation Notes` section with the Backend Engineer's summary of changes
-- Update `backlog/README.md` with the new task status
+- Move the task file from `backlog/active/` to `backlog/completed/` using the terminal: `mv backlog/active/NNN-task-name.md backlog/completed/`
+- Remove the task row from `backlog/active/README.md`
+- Add the task row to `backlog/completed/README.md`
+- Update counts in `backlog/README.md` (decrement Active, increment Completed)
 - Commit all changes (code, tests, docs, backlog updates) following the `commit-to-git` skill conventions
 
 ## Phase 3: Report

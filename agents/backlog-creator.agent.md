@@ -49,9 +49,9 @@ You will receive a refined specification that has already been analyzed and clar
 
 ## 4. Create Backlog Files
 
-- Create the `backlog/` directory if it does not exist
-- Create one markdown file per task using the naming convention: `NNN-kebab-case-title.md`
-  - Example: `001-add-user-authentication.md`, `002-create-login-endpoint.md`
+- Create the `backlog/`, `backlog/active/`, and `backlog/completed/` directories if they do not exist
+- Create one markdown file per task in `backlog/active/` using the naming convention: `NNN-kebab-case-title.md`
+  - Example: `backlog/active/001-add-user-authentication.md`, `backlog/active/002-create-login-endpoint.md`
 - Number tasks sequentially to indicate recommended execution order
 - Use this template for each task file:
 
@@ -81,19 +81,43 @@ pending
 <!-- Populated by the acceptance tester -->
 ```
 
-## 5. Create Backlog Index
+## 5. Create Backlog Indexes
 
-Create `backlog/README.md` with a summary table:
+Create three index files following the `agent-backlog-maintenance` skill:
+
+### `backlog/active/README.md` — Active tasks index
 
 ```markdown
-# Backlog
-
-## Tasks
+# Active Tasks
 
 | # | Task | Priority | Status | Dependencies |
 |---|------|----------|--------|--------------|
 | 001 | [Task title](001-task-name.md) | high | pending | None |
 | 002 | [Task title](002-task-name.md) | medium | pending | 001 |
+```
+
+### `backlog/completed/README.md` — Completed tasks index (initially empty)
+
+```markdown
+# Completed Tasks
+
+| # | Task | Priority |
+|---|------|----------|
+```
+
+### `backlog/README.md` — Master summary
+
+```markdown
+# Backlog
+
+| Category  | Count |
+|-----------|-------|
+| Active    | <N>   |
+| Completed | 0     |
+| Total     | <N>   |
+
+- [Active Tasks](active/README.md)
+- [Completed Tasks](completed/README.md)
 ```
 
 ## 6. Report
