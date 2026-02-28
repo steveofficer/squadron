@@ -1,0 +1,26 @@
+{
+  "name": "squadron",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "An Agentic Coding Suite for GitHub Copilot — autonomous agents that refine, plan, implement, test, and document software changes.",
+  "keywords": [
+    "github-copilot",
+    "agents",
+    "agentic-coding",
+    "ai-engineering"
+  ],
+  "bin": {
+    "squadron": "./cli.js"
+  },
+  "files": [
+    "cli.js",
+    "agents",
+    "skills"
+  ],
+  "dependencies": {
+    "@clack/prompts": "^0.9.1",
+    "picocolors": "^1.1.1"
+  },
+  "author": "",
+  "license": "ISC"
+}
