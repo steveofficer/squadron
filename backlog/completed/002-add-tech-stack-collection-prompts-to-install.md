@@ -1,7 +1,7 @@
 # Add Tech Stack Layer Collection Prompts to Install Flow
 
 ## Status
-pending
+completed
 
 ## Priority
 high
@@ -44,3 +44,5 @@ None
 
 ## Testing Findings
 <!-- Populated by the Acceptance Tester after verification -->
+
+Added `async function collectTechStack()` to `cli.js`. Iterates over predefined layers (Frontend, Backend, Database, Mobile, Infrastructure), prompts for each, then loops for custom layers. Returns array of `{ name, kebabName, technology, libraries }` objects. All prompts check `isCancel()`.

@@ -1,7 +1,7 @@
 # Add Tech Stack Context Step to Test Engineer Agent
 
 ## Status
-pending
+completed
 
 ## Priority
 medium
@@ -28,3 +28,5 @@ None
 
 ## Testing Findings
 <!-- Populated by the Acceptance Tester after verification -->
+
+Added first bullet in `## 1. Understand the Requirements` of `agents/test-engineer.agent.md`: load project-stacks/SKILL.md and each listed stack skill file for testing framework context.

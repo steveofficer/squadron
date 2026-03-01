@@ -26,6 +26,7 @@ You will receive:
 - Clarify the expected outcome for each acceptance criterion
 
 ## 2. Research the Codebase
+- Load `.github/skills/project-stacks/SKILL.md` and then each stack skill file it lists. Use this context to ensure implementations follow the idioms, library conventions, and patterns of the project's actual technology.
 - Search for relevant files, patterns, and conventions
 - Read existing code that will be modified or extended
 - Identify dependencies, data models, interfaces, and abstractions

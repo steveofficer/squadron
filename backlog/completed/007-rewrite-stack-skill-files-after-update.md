@@ -1,7 +1,7 @@
 # Rewrite Stack Skill Files After Update
 
 ## Status
-pending
+completed
 
 ## Priority
 medium
@@ -35,3 +35,5 @@ Complete the `update()` function in `cli.js` by persisting the changes returned 
 
 ## Testing Findings
 <!-- Populated by the Acceptance Tester after verification -->
+
+Completed `async function update()` in `cli.js`. Calls `runUpdateMenu()`, then uses spinner to delete removed layer files, write updated layers with `writeLayerSkillFile()`, and regenerate or remove `project-stacks/SKILL.md`. Logs success/warn per layer.

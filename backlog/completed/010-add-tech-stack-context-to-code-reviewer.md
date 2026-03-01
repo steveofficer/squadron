@@ -1,7 +1,7 @@
 # Add Tech Stack Context Step to Code Reviewer Agent
 
 ## Status
-pending
+completed
 
 ## Priority
 medium
@@ -28,3 +28,5 @@ None
 
 ## Testing Findings
 <!-- Populated by the Acceptance Tester after verification -->
+
+Added introductory paragraph before "Invoke all three reviewers" in `## 1. Delegate to Sub-Reviewers` of `agents/code-reviewer.agent.md`: load project-stacks/SKILL.md and pass tech stack context to each sub-reviewer.

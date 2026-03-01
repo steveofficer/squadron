@@ -25,6 +25,8 @@ You will receive:
 
 ## 1. Delegate to Sub-Reviewers
 
+Load `.github/skills/project-stacks/SKILL.md` and then each stack skill file it lists. Use this to evaluate code against the idioms, conventions, and pitfalls specific to the project's tech stack. Pass this tech stack context to each sub-reviewer.
+
 Invoke all three reviewers, providing each with the same context:
 - The task description and acceptance criteria
 - The list of files created or modified

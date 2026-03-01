@@ -20,6 +20,7 @@ You will receive:
 # Workflow
 
 ## 1. Understand the Requirements
+- Load `.github/skills/project-stacks/SKILL.md` and then each stack skill file it lists. Use this to write tests using the project's actual testing frameworks and library patterns.
 - Read the task description and acceptance criteria
 - Review the implementation changes to understand what was built
 - Identify the testing framework, conventions, and directory structure used in the project
