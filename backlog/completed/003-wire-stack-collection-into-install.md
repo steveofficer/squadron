@@ -1,7 +1,7 @@
 # Wire Tech Stack Collection into Install and Generate Skill Files
 
 ## Status
-pending
+completed
 
 ## Priority
 high
@@ -33,3 +33,5 @@ The existing install behaviour (agent + skill file copying, success messages, ou
 
 ## Testing Findings
 <!-- Populated by the Acceptance Tester after verification -->
+
+Updated `main()` to call `collectTechStack()` after resolving targetDir. After copying agents/skills, if layers collected, runs a spinner and calls `writeLayerSkillFile()` and `writeProjectStacksIndex()` for each layer. Logs hint if no layers configured.

@@ -2,8 +2,8 @@
 
 | Category  | Count |
 |-----------|-------|
-| Active    | 10    |
-| Completed | 0     |
+| Active    | 0     |
+| Completed | 10    |
 | Total     | 10    |
 
 - [Active Tasks](active/README.md)

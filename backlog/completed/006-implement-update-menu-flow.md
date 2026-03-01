@@ -1,7 +1,7 @@
 # Implement Update Menu Flow (Edit, Add, Remove Layers)
 
 ## Status
-pending
+completed
 
 ## Priority
 medium
@@ -46,3 +46,5 @@ Log `log.warn()` if the user tries to remove all layers (result would be empty) 
 
 ## Testing Findings
 <!-- Populated by the Acceptance Tester after verification -->
+
+Added `async function runUpdateMenu(initialLayers)` to `cli.js`. Handles empty state by calling `collectTechStack()` directly. Presents `select()` menu with edit/add/remove/done options. Edit pre-fills current values as defaults. Add calls `collectTechStack()`. Remove selects layer, confirms, splices from array. Warns if all layers removed.

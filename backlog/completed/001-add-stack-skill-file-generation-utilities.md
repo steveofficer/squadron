@@ -1,7 +1,7 @@
 # Add Stack Skill File Generation Utilities
 
 ## Status
-pending
+completed
 
 ## Priority
 high
@@ -70,3 +70,5 @@ None
 
 ## Testing Findings
 <!-- Populated by the Acceptance Tester after verification -->
+
+Added `writeLayerSkillFile(targetDir, layerName, technology, libraries)` and `writeProjectStacksIndex(targetDir, layers)` to `cli.js`. Both functions use `fs.mkdirSync` with `recursive: true` and `fs.writeFileSync`. Layer skill files use the ````skill fenced block format with YAML frontmatter, including optional Key Libraries section.

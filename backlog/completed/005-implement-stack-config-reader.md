@@ -1,7 +1,7 @@
 # Implement Stack Config Reader for Update Command
 
 ## Status
-pending
+completed
 
 ## Priority
 medium
@@ -38,3 +38,5 @@ This is a pure synchronous function — no prompts, no logging.
 
 ## Testing Findings
 <!-- Populated by the Acceptance Tester after verification -->
+
+Added `function readExistingLayers(targetDir)` to `cli.js`. Returns `[]` if index file missing. Parses project-stacks SKILL.md with regex to extract layer names and kebab names. Reads each layer file for technology and libraries values. Handles missing layer files gracefully.

@@ -1,7 +1,7 @@
 # Add `squadron update` Subcommand Scaffolding
 
 ## Status
-pending
+completed
 
 ## Priority
 high
@@ -42,3 +42,5 @@ None
 
 ## Testing Findings
 <!-- Populated by the Acceptance Tester after verification -->
+
+Extracted `async function resolveTargetDir()` from `main()`. Added `async function update()` stub. Replaced `main()` call at bottom with dispatcher checking `process.argv[2]`.
