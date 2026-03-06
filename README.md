@@ -2,7 +2,7 @@
 
 Squadron is an Agentic Coding Suite built specifically for **GitHub Copilot** and its **Premium Request billing model**.
 
-It provides a team of autonomous, specialized agents that take a specification from idea to implementation — refining requirements, breaking work into tasks, writing code, testing, and documenting changes.
+It provides a team of autonomous, specialized agents that take a specification from idea to implementation - refining requirements, breaking work into tasks, writing code, testing, and documenting changes.
 
 Humans provide the vision. Agents provide the implementation.
 
@@ -10,14 +10,13 @@ Humans provide the vision. Agents provide the implementation.
 
 ## Why Squadron Exists
 
-Most agentic coding suites are designed for platforms with token-based billing. On those platforms, every optimization is measured in tokens: prompts are compressed, context windows are trimmed, and output is kept terse — because tokens are the unit of cost.
+Most agentic coding suites are designed for platforms with token-based billing. On those platforms, every optimization is measured in tokens: prompts are compressed, context windows are trimmed, and output is kept terse because tokens are the unit of cost.
 
-GitHub Copilot works differently. Copilot bills by **Premium Request** — each time the model is invoked counts as a request, regardless of how many tokens it uses. The token-optimizing strategies used by other agent frameworks actively work against you here: frequent small model calls, iterative prompt refinement, and chatty tool loops all drive up your Premium Request count without any reduction in cost.
+GitHub Copilot works differently. Copilot bills by **Premium Request** - each time the model is prompted by the user counts as a request, regardless of how many tokens it uses. The token-optimizing strategies used by other agent frameworks actively work against you here: spawning subAgents via multiple prompts rapidly burn through your request quota.
 
 **Squadron is designed from the ground up around this billing model.** Its defining characteristic is minimizing the number of model invocations. It achieves this by:
 
 - **Using Copilot's native `agent` tool** to delegate work to background agents that run outside your active request context
-- **Batching work into large, autonomous tasks** rather than small iterative steps that each require a separate request
 - **Giving agents deep, complete context upfront** so they can complete work in a single pass without back-and-forth clarification
 
 If you are using GitHub Copilot and paying per Premium Request, Squadron is built for you. If you are on a token-billed platform, other frameworks may serve you better.
