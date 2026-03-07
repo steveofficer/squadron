@@ -53,7 +53,13 @@ Invoke this agent when you have a feature request, specification, bug report, or
    - Explicit scope boundaries (what is included and what is not)
    - Non-functional requirements (performance, security, compatibility)
 
-2. Present the refined specification to the user for final confirmation:
+2. For each requirement or acceptance criterion, define **TDD test scenarios** — concrete, executable scenarios that will be implemented as automated tests before the feature is built:
+   - Use the format: "Given [context], when [action], then [expected result]"
+   - Cover the happy path and critical edge cases
+   - These test scenarios form the foundation for the Test Engineer and serve as verifiable evidence for the Acceptance Tester
+   - Every requirement must have at least one associated test scenario
+
+3. Present the refined specification (including TDD test scenarios) to the user for final confirmation:
    - Display the full specification in your response
    - Use askQuestions with a concise confirmation question (e.g., "Does this specification accurately capture the requirements?") and clear options ("Yes, create the backlog" / "No, I have corrections")
    - If the user has corrections, incorporate them and re-confirm
@@ -62,11 +68,12 @@ Invoke this agent when you have a feature request, specification, bug report, or
 
 1. Once the user confirms, invoke the **Backlog Creator** agent with the complete refined specification
 2. Include in the delegation prompt:
-   - The full refined specification
+   - The full refined specification including all TDD test scenarios
    - Key codebase context (architecture, conventions, relevant file paths)
    - Any constraints or preferences expressed by the user
+   - The instruction that each task's acceptance criteria must map directly to the TDD test scenarios defined in the specification, so tests can be written before implementation begins
 3. Review the backlog created and present a summary to the user
-4. Inform the user that they can invoke the **Task Dispatcher** agent to begin implementation
+4. Inform the user that they can invoke the **Task Dispatcher** agent to begin implementation using a test-first (TDD) workflow
 
 # Quality Standards
 
