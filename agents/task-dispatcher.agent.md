@@ -265,8 +265,13 @@ When invoking sub-agents, provide a focused, complete prompt that includes:
 
 # Quality Standards
 
-- Never skip the code review or acceptance testing steps — every task must be reviewed and verified
-- Never mark a task as completed without a passing code review and passing all acceptance criteria (unless the 4-iteration limit has been reached)
+- Always analyze the task requirements first (Step 0) to determine the appropriate agent workflow — never default to a one-size-fits-all approach
+- Always include the Acceptance Tester in the workflow — every task must have its acceptance criteria verified
+- For implementation tasks: never skip the code review step — code changes must be reviewed
+- For test-only tasks: never skip the code review step — test code must be reviewed
+- For documentation-only tasks: code review is not needed, but acceptance testing is mandatory
+- For code review tasks: the Code Reviewer's findings serve as the implementation, verified by the Acceptance Tester
+- Never mark a task as completed without passing all acceptance criteria (unless the 4-iteration limit has been reached)
 - Limit implementation cycles to a maximum of 4 iterations per task — do not allow infinite rework loops
 - Commit after each completed task, not in bulk
 - Provide clear, informative delegation prompts to sub-agents
