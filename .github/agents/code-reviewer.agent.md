@@ -48,7 +48,7 @@ Once all three reviewers have reported, consolidate their findings using this fr
 **Confirmed Issues** — Found by all 3 reviewers:
 These are legitimate issues. They must be addressed.
 
-**Likely Issues** — Found by both the Strict and Reasonable reviewers:
+**Likely Issues** — Found by any two of the three reviewers:
 These are probably real issues. Include them as actionable findings.
 
 **Potential Issues** — Found only by the Reasonable reviewer:
@@ -59,6 +59,11 @@ These are minor preferences. Include them as optional suggestions but do not req
 
 **Show-Stoppers** — Found only by the Lenient reviewer:
 If the lenient reviewer flagged something the others missed, it's likely a high-severity issue that was miscategorized by the other reviewers. Treat as a confirmed issue.
+
+When classifying two-reviewer combinations:
+- **Strict + Reasonable (not Lenient)**: Likely Issue
+- **Reasonable + Lenient (not Strict)**: Likely Issue — the pragmatic and show-stopper reviewers both agree
+- **Strict + Lenient (not Reasonable)**: Treat as a Show-Stopper / Confirmed Issue — the Lenient reviewer's involvement signals high severity; the Strict reviewer's agreement confirms it is not a false positive
 
 ### Deduplication
 When multiple reviewers flag the same or overlapping issue, merge them into a single finding. Use the most specific and actionable description. Note how many reviewers independently identified it.
@@ -75,7 +80,7 @@ The code passes review when:
 ### REWORK NEEDED
 The code needs rework when:
 - There are confirmed issues (found by all 3 reviewers)
-- There are likely issues (found by strict + reasonable)
+- There are likely issues (found by at least two reviewers)
 - There are show-stoppers (flagged by lenient reviewer)
 - There are potential issues that affect security or correctness
 
@@ -94,8 +99,8 @@ Return a structured consolidated review:
 ### Confirmed Issues (all 3 reviewers agree)
 - [file:line] Description — (strict, reasonable, lenient)
 
-### Likely Issues (strict + reasonable agree)
-- [file:line] Description — (strict, reasonable)
+### Likely Issues (two reviewers agree)
+- [file:line] Description — (strict, reasonable) / (reasonable, lenient) / (strict, lenient)
 
 ### Potential Issues (reasonable reviewer only)
 - [file:line] Description — (reasonable)
