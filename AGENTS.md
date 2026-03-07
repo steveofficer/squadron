@@ -90,7 +90,8 @@ When creating or modifying skill definitions in `/skills/`:
 
 Squadron follows a structured workflow. Agents must respect this sequence:
 
-1. **Refine Requirements** → clarify ambiguities, resolve conflicts, produce a refined spec
+1. **Refine Requirements** → clarify ambiguities, produce a refined spec
+   - **Requirement Conflict Resolver** → invoked automatically when new requirements may conflict with existing code
 2. **Backlog Creator** → decompose the spec into tasks with acceptance criteria
 3. **Task Dispatcher** → for each task, orchestrate:
    - **Test Engineer** → write tests first (TDD)

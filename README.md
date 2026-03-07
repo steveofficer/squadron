@@ -35,6 +35,7 @@ flowchart TD
     U2(["You review the backlog"]):::user
 
     RR["**Refine Requirements**\nAsks clarifying questions\nProduces a refined spec"]:::entrypoint
+    RCR["**Requirement Conflict Resolver**\nAnalyses conflicts between\nnew requirements and existing code"]:::autonomous
     BC["**Backlog Creator**\nDecomposes spec into discrete\ntasks with acceptance criteria"]:::autonomous
     DISP["**Task Dispatcher**\nOrchestrates all agents\nper task; retries on failure"]:::entrypoint
 
@@ -50,6 +51,7 @@ flowchart TD
 
     U1         --> RR
     RR         -- "delegates to" --> BC
+    RR         -- "conflict check" --> RCR
     BC         --> U2
     U2         --> DISP
     DISP       -- "implements"   --> BE
@@ -83,6 +85,7 @@ Invoke the **Refine Requirements** agent with your feature request, bug report, 
 - Asks you clarifying questions to resolve them
 - Produces a refined, unambiguous specification
 - Delegates to the **Backlog Creator** to generate a task backlog
+- Invokes the **Requirement Conflict Resolver** when new requirements may conflict with existing code; escalates unresolvable conflicts to you before proceeding
 
 ### Step 2: Review the Backlog
 
@@ -92,8 +95,8 @@ The **Backlog Creator** breaks the refined specification into small, discrete ta
 
 Invoke the **Task Dispatcher** agent to begin implementation. For each task, it:
 
-1. Delegates to **Backend Engineer** for implementation
-2. Delegates to **Test Engineer** for test coverage
+1. Delegates to **Test Engineer** to write tests first (TDD)
+2. Delegates to **Backend Engineer** to implement until the tests pass
 3. Delegates to **Code Reviewer** for a multi-perspective code review (strict, reasonable, and lenient)
 4. Delegates to **Acceptance Tester** for verification against acceptance criteria
 5. Re-attempts implementation if the code review or acceptance criteria aren't met (up to 4 iterations)
@@ -104,6 +107,9 @@ Invoke the **Task Dispatcher** agent to begin implementation. For each task, it:
 
 ### Refine Requirements
 **Entry point** — the first agent you interact with. Performs deep analysis of your specification, asks clarifying questions to eliminate ambiguities, and ensures requirements are complete and implementable before any code is written.
+
+### Requirement Conflict Resolver
+Invoked automatically by Refine Requirements when a potential conflict between new requirements and the existing codebase is detected. Performs deep investigation of affected code paths, tests, and data flows. Returns one of three outcomes: resolved (with a concrete resolution strategy), false alarm (behaviors can coexist without changes), or unresolvable (escalated to the user with evidence and ruled-out alternatives before proceeding). Not directly user-invokable.
 
 ### Backlog Creator
 Takes the refined specification and decomposes it into small, independently implementable tasks. Each task has specific acceptance criteria, priority, and dependency ordering. Creates structured backlog files in the `backlog/` directory.
