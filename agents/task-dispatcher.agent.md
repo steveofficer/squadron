@@ -36,26 +36,29 @@ Create a feature branch for this task following the `commit-to-git` skill branch
 ```
 <type>/<task-id>
 ```
-For example: `feat/003-add-token-refresh`. Check out this branch before delegating to the Backend Engineer.
+For example: `feat/003-add-token-refresh`. Check out this branch before delegating to the Test Engineer or Backend Engineer.
 
-### Step 1: Implement
+### Step 1: Write Tests First (TDD)
+Invoke the **Test Engineer** agent with:
+- The full task description and acceptance criteria
+- The project's testing framework and conventions
+- Relevant codebase context: key file paths, architecture patterns, coding conventions
+- The instruction to write tests that correspond to each acceptance criterion **before any implementation exists** — these tests are expected to fail initially and will pass once the Backend Engineer completes the implementation
+
+### Step 2: Implement
 Invoke the **Backend Engineer** agent with a focused prompt containing:
 - The full task description and acceptance criteria
+- The Test Engineer's summary of tests written (files, test names, what each test verifies)
 - Relevant codebase context: key file paths, architecture patterns, coding conventions
 - Scope boundaries: what should and should not be changed
 - Any dependency context from previously completed tasks
+- The instruction to implement only what is needed to make the pre-written TDD tests pass
 - On rework iterations: the Code Reviewer's rework instructions and/or the Acceptance Tester's failure findings
-
-### Step 2: Test
-Invoke the **Test Engineer** agent with:
-- The task description and acceptance criteria
-- The Backend Engineer's summary of changes (files modified, approach taken)
-- The project's testing framework and conventions
 
 ### Step 3: Code Review
 Invoke the **Code Reviewer** agent with:
 - The task description and acceptance criteria
-- The list of all files created or modified by the Backend Engineer and Test Engineer
+- The list of all files created or modified by the Test Engineer and Backend Engineer
 - A summary of the implementation approach
 - The project's coding conventions and style context
 - The current iteration number (1–4)
@@ -65,6 +68,7 @@ Invoke the **Acceptance Tester** agent with:
 - The task description and acceptance criteria
 - Implementation and test summaries from the previous steps
 - The backlog file path for recording findings
+- The instruction that the TDD tests written in Step 1 serve as executable evidence — each passing test is direct proof that the corresponding acceptance criterion has been met
 
 ### Step 5: Handle Results
 - **If Code Review verdict is PASS and all acceptance criteria PASS**: proceed to Step 6
@@ -72,7 +76,7 @@ Invoke the **Acceptance Tester** agent with:
   - Collect the Code Reviewer's rework instructions and the Acceptance Tester's failure findings
   - Increment the iteration counter
   - If iteration count exceeds 4: accept the code as-is, proceed to Step 6. Record any outstanding findings in the backlog but do not block completion — the code is as good as it will get.
-  - Otherwise: return to Step 1 with the combined feedback from the Code Review and Acceptance Test, instructing the Backend Engineer to address the specific issues
+  - Otherwise: return to Step 2 with the combined feedback from the Code Review and Acceptance Test, instructing the Backend Engineer to address the specific issues (do not rewrite the TDD tests unless the acceptance criteria themselves have changed)
 
 ### Step 6: Document
 Invoke the **Technical Writer** agent with:
