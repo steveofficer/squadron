@@ -34,20 +34,20 @@ flowchart TD
     U1(["You provide a spec"]):::user
     U2(["You review the backlog"]):::user
 
-    RR["**Refine Requirements**\nAsks clarifying questions\nProduces a refined spec"]:::entrypoint
-    RCR["**Requirement Conflict Resolver**\nAnalyses conflicts between\nnew requirements and existing code"]:::autonomous
-    BC["**Backlog Creator**\nDecomposes spec into discrete\ntasks with acceptance criteria"]:::autonomous
-    DISP["**Task Dispatcher**\nOrchestrates all agents\nper task; retries on failure"]:::entrypoint
+    RR["**Refine Requirements**<br/>Asks clarifying questions<br/>Produces a refined spec"]:::entrypoint
+    RCR["**Requirement Conflict Resolver**<br/>Analyses conflicts between<br/>new requirements and existing code"]:::autonomous
+    BC["**Backlog Creator**<br/>Decomposes spec into discrete<br/>tasks with acceptance criteria"]:::autonomous
+    DISP["**Task Dispatcher**<br/>Orchestrates all agents<br/>per task; retries on failure"]:::entrypoint
 
-    BE["**Backend Engineer**\nImplements code"]:::autonomous
-    TE["**Test Engineer**\nWrites tests"]:::autonomous
-    CR["**Code Reviewer**\nSynthesises a multi-perspective\nconsolidated verdict"]:::autonomous
-    AT["**Acceptance Tester**\nVerifies acceptance criteria"]:::autonomous
-    TW["**Technical Writer**\nUpdates docs"]:::autonomous
+    BE["**Backend Engineer**<br/>Implements code"]:::autonomous
+    TE["**Test Engineer**<br/>Writes tests"]:::autonomous
+    CR["**Code Reviewer**<br/>Synthesises a multi-perspective<br/>consolidated verdict"]:::autonomous
+    AT["**Acceptance Tester**<br/>Verifies acceptance criteria"]:::autonomous
+    TW["**Technical Writer**<br/>Updates docs"]:::autonomous
 
-    SR["**Strict Reviewer**\nEvery detail"]:::subreview
-    RRev["**Reasonable Reviewer**\nWhat matters"]:::subreview
-    LR["**Lenient Reviewer**\nShow-stoppers only"]:::subreview
+    SR["**Strict Reviewer**<br/>Every detail"]:::subreview
+    RRev["**Reasonable Reviewer**<br/>What matters"]:::subreview
+    LR["**Lenient Reviewer**<br/>Show-stoppers only"]:::subreview
 
     U1         --> RR
     RR         -- "delegates to" --> BC
