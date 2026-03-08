@@ -20,11 +20,11 @@ The test file must be placed at `tests/002-rename-backend-engineer.test.js`.
 Note: `.github/agents/` and `.github/skills/` are human-managed installed copies and must NOT be included in these searches. Tests must scope to source files only.
 
 ## Acceptance Criteria
-- [ ] Given `tests/002-rename-backend-engineer.test.js` exists, when it is run against the unmodified codebase, then all four test cases fail (confirming tests are meaningful and not trivially passing)
-- [ ] Given the test file, when it searches `agents/` for "Backend Engineer", then the check targets only the `agents/` directory (not `.github/agents/`)
-- [ ] Given the test file, when it searches `skills/` for "Backend Engineer", then the check targets only the `skills/` directory (not `.github/skills/`)
-- [ ] Given the test file, when it checks for `agents/software-engineer.agent.md`, then it also reads and asserts that the `name:` frontmatter field equals "Software Engineer"
-- [ ] Given the test file, when its code style is reviewed, then it matches the conventions of `tests/001-document-requirement-conflict-resolver.test.js`
+- [x] Given `tests/002-rename-backend-engineer.test.js` exists, when it is run against the unmodified codebase, then all four test cases fail (confirming tests are meaningful and not trivially passing)
+- [x] Given the test file, when it searches `agents/` for "Backend Engineer", then the check targets only the `agents/` directory (not `.github/agents/`)
+- [x] Given the test file, when it searches `skills/` for "Backend Engineer", then the check targets only the `skills/` directory (not `.github/skills/`)
+- [x] Given the test file, when it checks for `agents/software-engineer.agent.md`, then it also reads and asserts that the `name:` frontmatter field equals "Software Engineer"
+- [x] Given the test file, when its code style is reviewed, then it matches the conventions of `tests/001-document-requirement-conflict-resolver.test.js`
 
 ## Dependencies
 None

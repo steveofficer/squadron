@@ -79,6 +79,12 @@ test('agents/software-engineer.agent.md exists with frontmatter name: "Software 
   const filePath = join(projectRoot, 'agents', 'software-engineer.agent.md');
   assert.ok(existsSync(filePath), 'agents/software-engineer.agent.md must exist');
 
+  const oldFilePath = join(projectRoot, 'agents', 'backend-engineer.agent.md');
+  assert.ok(
+    !existsSync(oldFilePath),
+    'agents/backend-engineer.agent.md must not exist alongside the new software engineer agent file',
+  );
+
   const content = readFileSync(filePath, 'utf8');
 
   // Extract the YAML frontmatter block (between --- delimiters)
