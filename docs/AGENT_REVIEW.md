@@ -95,7 +95,8 @@
 - Intelligent task classification before delegation (Step 0)
 - Four distinct workflow paths based on task type
 - 4-iteration limit prevents infinite rework loops
-- Branch creation per task for clean git history
+- Branch creation per milestone for clean git history
+- Milestone-scoped processing with user milestone selection
 - Comprehensive delegation guidelines with context efficiency
 
 **Observations:**

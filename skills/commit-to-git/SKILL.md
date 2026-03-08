@@ -67,20 +67,25 @@ Task: 015-update-readme
 
 # Branch Naming
 
-When working on a task from the backlog, create a branch named:
+When working on a milestone from the backlog, create a branch named:
 
 ```
-<type>/<task-id>
+<type>/M<N>-<milestone-slug>
 ```
+
+Use the most representative type for the milestone's overall work. The milestone slug is a short kebab-case summary of the milestone title.
 
 Examples:
-- `feat/003-add-token-refresh`
-- `fix/012-fix-user-creation-validation`
-- `docs/015-update-readme`
+- `feat/M1-user-authentication`
+- `fix/M2-payment-validation`
+- `docs/M3-api-documentation`
+
+All tasks within a milestone share the same branch. Individual task commits reference their task IDs in the commit message `Task:` trailer.
 
 # Commit Scope
 
 - Commit after each completed task — one task produces one commit (or a small number of logically related commits)
+- All tasks within a milestone are committed on the same branch
 - Each commit must leave the codebase in a working state with all tests passing
 - Never commit generated files, secrets, `.env` files, or environment-specific configuration
 - Include all related changes (code, tests, documentation) in the same commit when they belong to the same task

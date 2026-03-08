@@ -33,11 +33,11 @@ If you are using GitHub Copilot and paying per Premium Request, Squadron is buil
 flowchart TD
     U1(["You provide a spec"]):::user
     U2(["You review the backlog"]):::user
-
+    U3(["You select milestones"]):::user
     RR["**Refine Requirements**<br/>Asks clarifying questions<br/>Produces a refined spec"]:::entrypoint
     RCR["**Requirement Conflict Resolver**<br/>Analyses conflicts between<br/>new requirements and existing code"]:::autonomous
-    BC["**Backlog Creator**<br/>Decomposes spec into discrete<br/>tasks with acceptance criteria"]:::autonomous
-    DISP["**Task Dispatcher**<br/>Orchestrates all agents<br/>per task; retries on failure"]:::entrypoint
+    BC["**Backlog Creator**<br/>Decomposes spec into tasks<br/>grouped by deliverable milestones"]:::autonomous
+    DISP["**Task Dispatcher**<br/>Orchestrates all agents<br/>per milestone; retries on failure"]:::entrypoint
 
     BE["**Software Engineer**<br/>Implements code"]:::autonomous
     TE["**Test Engineer**<br/>Writes tests"]:::autonomous
@@ -53,7 +53,8 @@ flowchart TD
     RR         -- "delegates to" --> BC
     RR         -- "conflict check" --> RCR
     BC         --> U2
-    U2         --> DISP
+    U2         --> U3
+    U3         --> DISP
     DISP       -- "implements"   --> BE
     DISP       -- "tests"        --> TE
     DISP       -- "reviews"      --> CR
@@ -89,11 +90,11 @@ Invoke the **Refine Requirements** agent with your feature request, bug report, 
 
 ### Step 2: Review the Backlog
 
-The **Backlog Creator** breaks the refined specification into small, discrete tasks — each with specific acceptance criteria, priority, and dependency ordering. Review the generated backlog in the `backlog/` directory. You can adjust tasks, priorities, or acceptance criteria before proceeding.
+The **Backlog Creator** breaks the refined specification into small, discrete tasks — each with specific acceptance criteria, priority, and dependency ordering — and groups them into **deliverable milestones**. Each milestone represents a chunk of work that delivers measurable business value and is reviewable in approximately 1 hour. Review the generated backlog in the `backlog/` directory. You can adjust tasks, milestones, priorities, or acceptance criteria before proceeding.
 
 ### Step 3: Execute with Task Dispatcher
 
-Invoke the **Task Dispatcher** agent to begin implementation. For each task, it:
+Invoke the **Task Dispatcher** agent to begin implementation. You can specify which milestones to work on (e.g., "Work on M1 and M2") or let it process all milestones in order. For each milestone, it creates a branch and then for each task:
 
 1. Delegates to **Test Engineer** to write tests first (TDD)
 2. Delegates to **Software Engineer** to implement until the tests pass
@@ -102,6 +103,8 @@ Invoke the **Task Dispatcher** agent to begin implementation. For each task, it:
 5. Re-attempts implementation if the code review or acceptance criteria aren't met (up to 4 iterations)
 6. Delegates to **Technical Writer** for documentation updates
 7. Commits changes and updates the backlog
+
+When all tasks in a milestone are complete, the milestone is marked done and ready for PR creation and deployment.
 
 ## Meet the Agents
 
@@ -112,10 +115,10 @@ Invoke the **Task Dispatcher** agent to begin implementation. For each task, it:
 Invoked automatically by Refine Requirements when a potential conflict between new requirements and the existing codebase is detected. Performs deep investigation of affected code paths, tests, and data flows. Returns one of three outcomes: resolved (with a concrete resolution strategy), false alarm (behaviors can coexist without changes), or unresolvable (escalated to the user with evidence and ruled-out alternatives before proceeding). Not directly user-invokable.
 
 ### Backlog Creator
-Takes the refined specification and decomposes it into small, independently implementable tasks. Each task has specific acceptance criteria, priority, and dependency ordering. Creates structured backlog files in the `backlog/` directory.
+Takes the refined specification and decomposes it into small, independently implementable tasks. Each task has specific acceptance criteria, priority, and dependency ordering. Tasks are grouped into **deliverable milestones** — each milestone delivers measurable business value and is reviewable by a human in approximately 1 hour. Creates structured backlog files in the `backlog/` directory.
 
 ### Task Dispatcher
-The engineering manager. Reads the backlog, selects tasks in dependency and priority order, delegates to specialist agents, and ensures each task passes acceptance testing before marking it complete. Handles retries and escalation for blocked tasks.
+The engineering manager. Reads the backlog, accepts milestone selection from the user (specific milestones or all), creates a branch per milestone, selects tasks in dependency and priority order within each milestone, delegates to specialist agents, and ensures each task passes acceptance testing before marking it complete. Handles retries and escalation for blocked tasks. Signals PR readiness when a milestone is complete.
 
 ### Software Engineer
 Implements a single task from the backlog. Researches the codebase, writes production-quality code following project conventions, and verifies changes pass existing tests.
@@ -144,10 +147,10 @@ Maintains project documentation. Updates README files, changelogs, API documenta
 ## Skills
 
 ### Agent Backlog Maintenance
-Defines the schema, file format, naming conventions, and lifecycle rules for the task backlog. Used by the Backlog Creator and Task Dispatcher to ensure consistent backlog management.
+Defines the schema, file format, naming conventions, milestone structure, and lifecycle rules for the task backlog. Used by the Backlog Creator and Task Dispatcher to ensure consistent backlog management.
 
 ### Commit to Git
-Defines commit message formatting ([Conventional Commits](https://www.conventionalcommits.org/)), branch naming conventions, and commit scope guidelines. Used by the Task Dispatcher when committing completed work.
+Defines commit message formatting ([Conventional Commits](https://www.conventionalcommits.org/)), milestone-based branch naming conventions, and commit scope guidelines. Used by the Task Dispatcher when committing completed work.
 
 ### Review Findings
 Defines the standard report format for all reviewer agents. Specifies severity profiles for each reviewer type (Strict, Reasonable, Lenient) and the mandatory recommendation line (`PASS` / `REWORK NEEDED`) that the Code Reviewer uses to synthesise findings consistently.

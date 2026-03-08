@@ -93,14 +93,17 @@ Squadron follows a structured workflow. Agents must respect this sequence:
 
 1. **Refine Requirements** → clarify ambiguities, produce a refined spec
    - **Requirement Conflict Resolver** → invoked automatically when new requirements may conflict with existing code
-2. **Backlog Creator** → decompose the spec into tasks with acceptance criteria
-3. **Task Dispatcher** → for each task, orchestrate:
-   - **Test Engineer** → write tests first (TDD)
-   - **Software Engineer** → implement to pass the tests
-   - **Code Reviewer** → multi-perspective review (strict, reasonable, lenient)
-   - **Acceptance Tester** → verify acceptance criteria are met
-   - **Technical Writer** → update documentation
-4. **Commit** → following the `commit-to-git` skill
+2. **Backlog Creator** → decompose the spec into tasks with acceptance criteria, grouped into deliverable milestones
+3. **Task Dispatcher** → for each milestone (user may select specific milestones or all):
+   - Create a milestone branch
+   - For each task in the milestone, orchestrate:
+     - **Test Engineer** → write tests first (TDD)
+     - **Software Engineer** → implement to pass the tests
+     - **Code Reviewer** → multi-perspective review (strict, reasonable, lenient)
+     - **Acceptance Tester** → verify acceptance criteria are met
+     - **Technical Writer** → update documentation
+   - **Commit** each task following the `commit-to-git` skill
+   - Complete the milestone → signal PR readiness
 
 ### Skill References
 
@@ -121,11 +124,14 @@ Agents must follow these skills for their respective concerns — do not improvi
 
 - All code changes must pass existing tests before a task is marked complete
 - Every backlog task must have verifiable acceptance criteria
+- Every backlog task must belong to a deliverable milestone (or be explicitly standalone)
+- Milestones must deliver identifiable business value and be reviewable by a human in approximately 1 hour
 - Code review is mandatory for every task — never skip the review step
 - Acceptance testing is mandatory — never mark a task complete without verification
 - Documentation must be updated when user-facing behavior changes
-- The backlog must always be in a consistent state: no orphaned entries, correct counts, files in the right directories
+- The backlog must always be in a consistent state: no orphaned entries, correct counts, correct milestone assignments, files in the right directories
 - Each commit must leave the codebase in a working state with all tests passing
+- Branches are created per milestone, not per task — all tasks in a milestone share a branch
 
 ## Evolving This Document
 

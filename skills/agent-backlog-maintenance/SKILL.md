@@ -33,6 +33,9 @@ Each task is a single markdown file following this template:
 ## Priority
 <high|medium|low>
 
+## Milestone
+<M<N> — e.g., "M1", or "None" if not part of a milestone>
+
 ## Description
 <Clear, specific description of what needs to be implemented.
 Include enough context that the implementing agent does not need
@@ -75,6 +78,12 @@ The master index provides a summary overview only — it does NOT list individua
 | Completed | 3     |
 | Total     | 8     |
 
+| Milestones | Count |
+|------------|-------|
+| Active     | 2     |
+| Completed  | 1     |
+| Total      | 3     |
+
 - [Active Tasks](active/README.md)
 - [Completed Tasks](completed/README.md)
 ```
@@ -86,10 +95,18 @@ Lists only outstanding tasks (pending, in-progress, blocked). Completed tasks MU
 ```markdown
 # Active Tasks
 
-| # | Task | Priority | Status | Dependencies |
-|---|------|----------|--------|--------------|
-| 001 | [Add user model](001-add-user-model.md) | high | pending | None |
-| 002 | [Create auth endpoint](002-create-auth-endpoint.md) | high | in-progress | 001 |
+## Milestones
+
+| ID | Title | Description | Tasks |
+|----|-------|-------------|-------|
+| M1 | <Milestone title> | <Brief description of deliverable business value> | 001, 002 |
+
+## Tasks
+
+| # | Task | Milestone | Priority | Status | Dependencies |
+|---|------|-----------|----------|--------|--------------|
+| 001 | [Add user model](001-add-user-model.md) | M1 | high | pending | None |
+| 002 | [Create auth endpoint](002-create-auth-endpoint.md) | M1 | high | in-progress | 001 |
 ```
 
 ## Completed Index (`backlog/completed/README.md`)
@@ -99,9 +116,17 @@ Lists only completed tasks. Serves as a historical record, ordered by task numbe
 ```markdown
 # Completed Tasks
 
-| # | Task | Priority |
-|---|------|----------|
-| 003 | [Add login page](003-add-login-page.md) | high |
+## Completed Milestones
+
+| ID | Title |
+|----|-------|
+| M1 | User Authentication |
+
+## Tasks
+
+| # | Task | Milestone | Priority |
+|---|------|-----------|----------|
+| 003 | [Add login page](003-add-login-page.md) | M1 | high |
 ```
 
 # Task Discovery — Use Tools, Not Full File Reads
@@ -138,6 +163,45 @@ Use `grep_search` with pattern `^blocked$` and `includePattern` set to `backlog/
 ## Search for a task by name or keyword
 
 Use `grep_search` with the keyword and `includePattern` set to `backlog/**/*.md` to search across both active and completed tasks.
+
+## Find tasks in a specific milestone
+
+Use `grep_search` with pattern `^M<N>$` (e.g., `^M1$`) and `includePattern` set to `backlog/active/*.md` to find all active tasks belonging to that milestone.
+
+## Find complete/incomplete milestones
+
+Read `backlog/active/README.md` and check the Milestones table. A milestone is complete when none of its task IDs appear in active task files. Use `file_search` with `backlog/completed/NNN-*` for each task ID to verify.
+
+# Milestones
+
+A **milestone** is a group of sequential tasks that, when completed together, deliver measurable business value and form a reviewable unit of work. Each milestone represents a deliverable chunk — a point where an implementation session ends, a PR is created, and the work can be deployed to production.
+
+## Milestone Design Criteria
+
+- Each milestone must deliver identifiable business value — a user-facing feature, a complete subsystem, or a meaningful improvement
+- The combined work in a milestone should be reviewable by a human in approximately 1 hour
+- Tasks within a milestone are ordered by dependency; cross-milestone dependencies should be minimized
+- Every task belongs to exactly one milestone (or "None" for standalone housekeeping tasks)
+
+## Milestone Lifecycle
+
+```
+pending → in-progress → completed
+```
+
+- **pending**: All tasks in the milestone are pending or blocked. No work has started.
+- **in-progress**: At least one task in the milestone is in-progress or completed, but not all are completed.
+- **completed**: All tasks in the milestone are completed. The milestone row moves from the active index to the completed index.
+
+Milestone status is derived from its tasks — agents do not set it directly. When updating task status, check whether the milestone status has changed and update the indexes accordingly.
+
+## Completing a Milestone
+
+When the last task in a milestone is completed:
+
+1. Move the milestone row from the `## Milestones` table in `backlog/active/README.md` to the `## Completed Milestones` table in `backlog/completed/README.md`
+2. Update milestone counts in `backlog/README.md` (decrement Active, increment Completed)
+3. This is the natural point for creating a pull request and deploying to production
 
 # Status Transitions
 
@@ -187,18 +251,25 @@ All five steps MUST be performed together — never leave the backlog in an inco
 When creating a new backlog from a specification:
 
 1. Create `backlog/`, `backlog/active/`, and `backlog/completed/` directories
-2. Create all task files in `backlog/active/` with status `pending`
-3. Create `backlog/active/README.md` with all tasks listed
-4. Create `backlog/completed/README.md` with an empty table:
+2. Create all task files in `backlog/active/` with status `pending`, each assigned to a milestone
+3. Create `backlog/active/README.md` with the Milestones table and all tasks listed
+4. Create `backlog/completed/README.md` with empty tables:
 
 ```markdown
 # Completed Tasks
 
-| # | Task | Priority |
-|---|------|----------|
+## Completed Milestones
+
+| ID | Title |
+|----|-------|
+
+## Tasks
+
+| # | Task | Milestone | Priority |
+|---|------|-----------|----------|
 ```
 
-5. Create `backlog/README.md` with the correct counts (Active = total tasks, Completed = 0)
+5. Create `backlog/README.md` with the correct task and milestone counts (Active = total tasks, Completed = 0; Active milestones = total milestones, Completed milestones = 0)
 
 # Rules
 
@@ -210,3 +281,7 @@ When creating a new backlog from a specification:
 - The active index must only list active tasks; the completed index must only list completed tasks
 - The master index must only contain summary counts and links — never individual task rows
 - Prefer tool-based discovery (grep_search, file_search, list_dir) over reading entire index files when searching for tasks
+- Every task should belong to a milestone unless it is a standalone housekeeping task
+- Milestone status is derived from task statuses — never set milestone status independently
+- When the last task in a milestone is completed, move the milestone to the completed index and update counts
+- Cross-milestone dependencies should be avoided where possible; if unavoidable, the dependent milestone must be sequenced after the dependency milestone

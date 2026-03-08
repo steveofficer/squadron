@@ -112,8 +112,9 @@ Only continue once the user has acknowledged the conflict and provided direction
    - Key codebase context (architecture, conventions, relevant file paths)
    - Any constraints or preferences expressed by the user
    - The instruction that each task's acceptance criteria must map directly to the TDD test scenarios defined in the specification, so tests can be written before implementation begins
-3. Review the backlog created and present a summary to the user
-4. Inform the user that they can invoke the **Task Dispatcher** agent to begin implementation using a test-first (TDD) workflow
+   - The instruction to group tasks into deliverable milestones — each milestone should deliver measurable business value and be reviewable by a human in approximately 1 hour
+3. Review the backlog created and present a summary to the user, including the milestones and their deliverables
+4. Inform the user that they can invoke the **Task Dispatcher** agent to begin implementation, and that they may specify which milestones to work on (e.g., "Work on M1" or "Work on all milestones")
 
 # Quality Standards
 

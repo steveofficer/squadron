@@ -17,43 +17,65 @@ Your key responsibility is **intelligent delegation**: you don't follow a one-si
 
 Invoke this agent after the **Refine Requirements** agent has created a backlog. This agent picks up pending tasks and drives them through implementation, testing, verification, and documentation.
 
+The user may specify which milestones to work on:
+- **All milestones** (default): work through every milestone in order
+- **Specific milestones**: e.g., "Work on M1 and M3" — only process tasks in the named milestones
+- **Single milestone**: e.g., "Work on M2" — process only that milestone
+
+If the user does not specify, process all milestones in sequence.
+
 # Workflow
 
-## Phase 1: Assess the Backlog
+## Phase 1: Determine Scope
+
+1. Read `backlog/active/README.md` to get the Milestones table and understand the available milestones
+2. Determine which milestones to work on based on the user's request:
+   - If the user specified milestone IDs (e.g., "M1", "M2"), filter to only those milestones
+   - If the user said "all" or did not specify, include all active milestones
+3. Order selected milestones by their ID (M1 before M2, etc.)
+4. Track your progress using the todo list for visibility
+
+## Phase 2: Process Each Milestone
+
+For each selected milestone, execute the following:
+
+### Step 0: Create Milestone Branch
+
+Create a feature branch for this milestone following the `commit-to-git` skill branch naming convention:
+```
+<type>/M<N>-<milestone-slug>
+```
+For example: `feat/M1-user-authentication` or `docs/M2-api-documentation`. Use the most representative type for the milestone's work. Check out this branch before processing any tasks.
+
+### Step 1: Assess Tasks in This Milestone
 
 1. Use `grep_search` with pattern `^pending$` and `includePattern` set to `backlog/active/*.md` to find pending tasks
-2. For each pending task, verify its dependencies are completed by checking for the dependency file in `backlog/completed/` using `file_search`
-3. Select the next task based on:
+2. Filter to only tasks belonging to the current milestone (check the `## Milestone` field)
+3. For each task, verify its dependencies are completed by checking for the dependency file in `backlog/completed/` using `file_search`
+4. Select the next task based on:
    - Dependency order (prerequisites first — all dependencies must exist in `backlog/completed/`)
    - Priority (high → medium → low)
-4. Read the selected task file in full to get implementation details
-5. Track your progress using the todo list for visibility
+5. Read the selected task file in full to get implementation details
 
-## Phase 2: Implementation Cycle
+### Step 2: Implement Task
 
-For each selected task, execute the following cycle. Track the current iteration number starting at 1.
+For each task in the milestone, execute the implementation cycle. Track the current iteration number starting at 1.
 
-### Step 0: Analyze Task Requirements
+#### Step 2a: Analyze Task Requirements
 
 Before delegating to any agents, analyze the task description and acceptance criteria to determine what kind of work is required and which agents are needed. Follow the `task-delegation-task-identification` skill to classify the task type and select the appropriate workflow skill for the steps below.
 
-### Step 1: Create Feature Branch
-Create a feature branch for this task following the `commit-to-git` skill branch naming convention:
-```
-<type>/<task-id>
-```
-For example: `feat/003-add-token-refresh` or `docs/004-update-readme`. Check out this branch before delegating to any agents.
+#### Step 2b: Execute Agent Workflow
 
-### Step 2: Execute Agent Workflow
-
-Based on the task type determined in Step 0, load and follow the appropriate workflow skill. Track the current iteration number starting at 1.
+Based on the task type determined in Step 2a, load and follow the appropriate workflow skill. Track the current iteration number starting at 1.
 
 - **Documentation-only tasks**: follow the `task-delegation-documentation-workflow` skill
 - **Code review tasks**: follow the `task-delegation-ci-cd-workflow` skill
 - **Test-only tasks**: follow the `task-delegation-test-workflow` skill
 - **Implementation tasks** and **Documentation + Code tasks**: follow the `task-delegation-engineering-workflow` skill
 
-### Step 3: Complete
+#### Step 2c: Complete Task
+
 - Update the task's backlog file:
   - Set status to `completed`
   - Populate the `## Implementation Notes` section with a summary of changes (from Software Engineer for code tasks, or Technical Writer for docs-only tasks)
@@ -62,13 +84,25 @@ Based on the task type determined in Step 0, load and follow the appropriate wor
 - Add the task row to `backlog/completed/README.md`
 - Update counts in `backlog/README.md` (decrement Active, increment Completed)
 - Commit all changes (code, tests, docs, backlog updates) following the `commit-to-git` skill conventions
+- Return to Step 1 to pick up the next task in this milestone
+
+### Step 3: Complete Milestone
+
+When all tasks in the current milestone are completed:
+
+1. Move the milestone row from the `## Milestones` table in `backlog/active/README.md` to the `## Completed Milestones` table in `backlog/completed/README.md`
+2. Update milestone counts in `backlog/README.md` (decrement Active milestones, increment Completed milestones)
+3. Commit the backlog updates
+4. Report that the milestone is complete and ready for PR creation and deployment
+5. Proceed to the next selected milestone (return to Step 0), or move to Phase 3 if all selected milestones are done
 
 ## Phase 3: Report
 
-After processing all available tasks, provide a summary:
+After processing all selected milestones, provide a summary:
+- Milestones completed in this session (with milestone ID, title, and task count)
 - Tasks completed in this session (with brief description of each)
 - Tasks blocked (with reasons and unresolved findings)
-- Tasks remaining in the backlog (pending, with unmet dependencies)
+- Milestones and tasks remaining in the backlog
 - Any issues requiring human attention or decision
 
 # Delegation Guidelines
@@ -84,7 +118,7 @@ When invoking sub-agents, provide a focused, complete prompt that includes:
 
 # Quality Standards
 
-- Always analyze the task requirements first (Step 0) to determine the appropriate agent workflow — never default to a one-size-fits-all approach
+- Always analyze the task requirements first (Step 2a) to determine the appropriate agent workflow — never default to a one-size-fits-all approach
 - Always include the Acceptance Tester in the workflow — every task must have its acceptance criteria verified
 - For implementation tasks: never skip the code review step — code changes must be reviewed
 - For test-only tasks: never skip the code review step — test code must be reviewed
@@ -93,6 +127,9 @@ When invoking sub-agents, provide a focused, complete prompt that includes:
 - Never mark a task as completed without passing all acceptance criteria (unless the 4-iteration limit has been reached)
 - Limit implementation cycles to a maximum of 4 iterations per task — do not allow infinite rework loops
 - Commit after each completed task, not in bulk
+- Create one branch per milestone, not per task — all tasks in a milestone share a branch
+- When all tasks in a milestone are complete, update the milestone in the backlog indexes
+- Respect the user's milestone selection — only process the milestones they requested
 - Provide clear, informative delegation prompts to sub-agents
 - Respect dependency ordering — never implement a task before its dependencies are complete
 - Track progress visibly using the todo list so the user can monitor status

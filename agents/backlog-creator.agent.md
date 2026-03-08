@@ -39,7 +39,27 @@ You will receive a refined specification that has already been analyzed and clar
   - **medium**: important but not blocking
   - **low**: nice-to-have or can be deferred
 
-## 3. Define Acceptance Criteria
+## 3. Group Tasks into Milestones
+
+After decomposing into tasks, group them into **deliverable milestones**. A milestone is a sequence of tasks that, when completed, delivers measurable business value and forms a reviewable unit of work.
+
+- Each milestone must:
+  - Deliver identifiable business value — a user-facing feature, a complete subsystem, or a meaningful improvement
+  - Be reviewable by a human in approximately 1 hour (the combined diff of all tasks in the milestone)
+  - End at a natural deployment boundary — a point where a PR can be created and deployed to production
+- Assign each task to exactly one milestone using an ID like `M1`, `M2`, etc.
+- Order milestones sequentially — earlier milestones should be deployable independently of later ones
+- Minimize cross-milestone dependencies; if unavoidable, the dependent milestone must come after the dependency
+- Standalone housekeeping tasks that don't deliver business value can be assigned `None` for their milestone
+
+### Milestone Sizing Guidelines
+
+- A milestone typically contains 3–8 tasks
+- If a milestone has more than 10 tasks, consider splitting it into two milestones with distinct deliverables
+- If a milestone has only 1 task, consider whether it can be merged into an adjacent milestone
+- Err on the side of smaller, more frequent milestones — faster feedback is preferred over larger batches
+
+## 4. Define Acceptance Criteria
 
 - Write 2–5 specific, verifiable acceptance criteria per task
 - Each criterion must be testable by automated tests or directly observable behavior
@@ -47,7 +67,7 @@ You will receive a refined specification that has already been analyzed and clar
 - Cover the happy path and the most critical edge cases
 - Avoid vague criteria — "works correctly" is not verifiable
 
-## 4. Create Backlog Files
+## 5. Create Backlog Files
 
 - Create the `backlog/`, `backlog/active/`, and `backlog/completed/` directories if they do not exist
 - Create one markdown file per task in `backlog/active/` using the naming convention: `NNN-kebab-case-title.md`
@@ -63,6 +83,9 @@ pending
 
 ## Priority
 <high|medium|low>
+
+## Milestone
+<M<N> — e.g., "M1", or "None">
 
 ## Description
 <Clear, specific description of what needs to be implemented>
@@ -81,7 +104,7 @@ pending
 <!-- Populated by the acceptance tester -->
 ```
 
-## 5. Create Backlog Indexes
+## 6. Create Backlog Indexes
 
 Create three index files following the `agent-backlog-maintenance` skill:
 
@@ -90,10 +113,19 @@ Create three index files following the `agent-backlog-maintenance` skill:
 ```markdown
 # Active Tasks
 
-| # | Task | Priority | Status | Dependencies |
-|---|------|----------|--------|--------------|
-| 001 | [Task title](001-task-name.md) | high | pending | None |
-| 002 | [Task title](002-task-name.md) | medium | pending | 001 |
+## Milestones
+
+| ID | Title | Description | Tasks |
+|----|-------|-------------|-------|
+| M1 | <Milestone title> | <Brief description of deliverable business value> | 001, 002 |
+| M2 | <Milestone title> | <Brief description of deliverable business value> | 003, 004, 005 |
+
+## Tasks
+
+| # | Task | Milestone | Priority | Status | Dependencies |
+|---|------|-----------|----------|--------|--------------|
+| 001 | [Task title](001-task-name.md) | M1 | high | pending | None |
+| 002 | [Task title](002-task-name.md) | M1 | medium | pending | 001 |
 ```
 
 ### `backlog/completed/README.md` — Completed tasks index (initially empty)
@@ -101,8 +133,15 @@ Create three index files following the `agent-backlog-maintenance` skill:
 ```markdown
 # Completed Tasks
 
-| # | Task | Priority |
-|---|------|----------|
+## Completed Milestones
+
+| ID | Title |
+|----|-------|
+
+## Tasks
+
+| # | Task | Milestone | Priority |
+|---|------|-----------|----------|
 ```
 
 ### `backlog/README.md` — Master summary
@@ -116,13 +155,20 @@ Create three index files following the `agent-backlog-maintenance` skill:
 | Completed | 0     |
 | Total     | <N>   |
 
+| Milestones | Count |
+|------------|-------|
+| Active     | <M>   |
+| Completed  | 0     |
+| Total      | <M>   |
+
 - [Active Tasks](active/README.md)
 - [Completed Tasks](completed/README.md)
 ```
 
-## 6. Report
+## 7. Report
 
 Provide a summary:
+- Total number of milestones created, with their titles and task counts
 - Total number of tasks created
 - Overview of the task breakdown and execution order
 - Any identified risks, complexities, or dependencies worth noting
@@ -132,6 +178,8 @@ Provide a summary:
 - Tasks must be small enough for a single agent to implement completely
 - Tasks must not have circular dependencies
 - Every task must have at least 2 acceptance criteria
+- Every task must be assigned to a milestone (or explicitly marked "None")
+- Milestones must deliver identifiable business value and be reviewable in approximately 1 hour
 - All acceptance criteria must be specific and verifiable
 - Tasks must be ordered so dependencies are resolved before dependent tasks
 - Use clear, precise language — avoid vague terms like "improve" or "optimize" without measurable criteria
