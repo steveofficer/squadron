@@ -1,9 +1,9 @@
 ---
 name: Requirement Conflict Resolver
 description: Performs deep research and analysis to determine whether a conflict between new requirements and existing implementation or tests can be cleanly resolved. Provides sophisticated resolution strategies, or clearly documents why no resolution is possible.
-model: Claude Sonnet 4.6 (copilot)
+model: Claude Sonnet 4.6
 tools: [read, search]
-user-invokable: false
+user-invocable: false
 ---
 
 # Role

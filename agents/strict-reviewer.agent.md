@@ -1,8 +1,8 @@
 ---
 name: Strict Reviewer
 description: Performs an exhaustive, nitpicky code review that flags every imperfection — stylistic inconsistencies, naming issues, missing edge cases, and minor code quality concerns.
-model: Claude Sonnet 4.6 (copilot)
-user-invokable: false
+model: Claude Sonnet 4.6
+user-invocable: false
 tools: [read, search]
 ---
 

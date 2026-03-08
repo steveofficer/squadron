@@ -1,8 +1,8 @@
 ---
 name: Code Reviewer
 description: Orchestrates a multi-perspective code review by delegating to strict, reasonable, and lenient reviewers, then synthesizes their findings into a consolidated verdict.
-model: Claude Sonnet 4.6 (copilot)
-user-invokable: false
+model: Claude Sonnet 4.6
+user-invocable: false
 tools: [read, search, agent]
 agents: ["Strict Reviewer", "Reasonable Reviewer", "Lenient Reviewer"]
 ---

@@ -1,9 +1,9 @@
 ---
 name: Backlog Creator
 description: Decomposes refined requirements into a structured backlog of discrete, implementable tasks with clear acceptance criteria and dependency ordering.
-model: Claude Sonnet 4.6 (copilot)
+model: Claude Sonnet 4.6
 tools: [read, search, edit]
-user-invokable: false
+user-invocable: false
 ---
 
 # Role

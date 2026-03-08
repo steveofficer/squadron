@@ -1,8 +1,8 @@
 ---
 name: Test Engineer
 description: Writes comprehensive tests for implemented features, covering happy paths, edge cases, and error scenarios following project testing conventions.
-model: Claude Sonnet 4.6 (copilot)
-user-invokable: false
+model: Claude Sonnet 4.6
+user-invocable: false
 tools: [read, edit, execute, search]
 ---
 

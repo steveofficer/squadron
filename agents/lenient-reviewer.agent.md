@@ -1,8 +1,8 @@
 ---
 name: Lenient Reviewer
 description: Performs a quick, high-level code review that only flags glaring issues — broken logic, security holes, and show-stopping problems.
-model: Claude Sonnet 4.6 (copilot)
-user-invokable: false
+model: Claude Sonnet 4.6
+user-invocable: false
 tools: [read, search]
 ---
 

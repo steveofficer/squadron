@@ -1,8 +1,8 @@
 ---
 name: Reasonable Reviewer
 description: Performs a pragmatic code review focused on maintainability, security, idiomatic usage, and correctness — ignoring trivial stylistic issues that don't affect quality.
-model: Claude Sonnet 4.6 (copilot)
-user-invokable: false
+model: Claude Sonnet 4.6
+user-invocable: false
 tools: [read, search]
 ---
 

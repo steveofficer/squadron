@@ -1,9 +1,9 @@
 ---
 name: Refine Requirements
 description: Analyzes specifications, identifies ambiguities, asks clarifying questions, and delegates to the Backlog Creator once requirements are complete and unambiguous.
-model: Claude Sonnet 4.6 (copilot)
+model: Claude Sonnet 4.6
 tools: [read, search, agent, vscode/askQuestions]
-user-invokable: true
+user-invocable: true
 agents: ["Backlog Creator", "Requirement Conflict Resolver"]
 ---
 

@@ -1,8 +1,8 @@
 ---
 name: Backend Engineer
 description: Implements code changes for a single backlog task, following project conventions and ensuring changes pass existing tests.
-model: Claude Sonnet 4.6 (copilot)
-user-invokable: false
+model: Claude Sonnet 4.6
+user-invocable: false
 tools: [read, edit, execute, search]
 ---
 

@@ -1,8 +1,8 @@
 ---
 name: Acceptance Tester
 description: Verifies completed tasks meet their acceptance criteria and reports detailed pass/fail findings for each criterion.
-model: Claude Sonnet 4.6 (copilot)
-user-invokable: false
+model: Claude Sonnet 4.6
+user-invocable: false
 tools: [read, edit, execute, search]
 ---
 

@@ -1,9 +1,9 @@
 ---
 name: Task Dispatcher
 description: Orchestrates the implementation workflow by analyzing backlog tasks to determine required skillsets, intelligently delegating to appropriate specialist agents, and ensuring each task passes acceptance testing before completion.
-model: Claude Sonnet 4.6 (copilot)
+model: Claude Sonnet 4.6
 tools: [read, edit, search, execute, agent, todo]
-user-invokable: true
+user-invocable: true
 agents: ["Backend Engineer", "Test Engineer", "Code Reviewer", "Acceptance Tester", "Technical Writer"]
 ---
 

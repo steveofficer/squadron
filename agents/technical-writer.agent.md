@@ -1,8 +1,8 @@
 ---
 name: Technical Writer
 description: Creates and maintains project documentation including README files, changelogs, and API documentation following project conventions.
-model: Claude Sonnet 4.6 (copilot)
-user-invokable: false
+model: Claude Sonnet 4.6
+user-invocable: false
 tools: [read, edit, search]
 ---
 
