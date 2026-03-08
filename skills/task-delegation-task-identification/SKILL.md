@@ -16,21 +16,21 @@ Before delegating to any agents, analyze the task description and acceptance cri
 
 ## Task Type Classification
 
-1. **Documentation-only tasks** — require Technical Writer only
+1. **Documentation-only tasks** — require Technical Writer and Acceptance Tester
    - Task involves only updating documentation files (README, CHANGELOG, guides)
    - No code implementation needed
    - Acceptance criteria focus on documentation quality and completeness
    - **Required agents**: Technical Writer → Acceptance Tester
    - **Skill to follow**: `task-delegation-documentation-workflow`
 
-2. **Code review tasks** — require Code Reviewer only
+2. **Code review tasks** — require Code Reviewer and Acceptance Tester
    - Task is to review existing code, CI/CD configuration, or quality standards
    - No new implementation needed
    - Acceptance criteria focus on code quality, standards compliance
    - **Required agents**: Code Reviewer → Acceptance Tester
    - **Skill to follow**: `task-delegation-ci-cd-workflow`
 
-3. **Test-only tasks** — require Test Engineer only
+3. **Test-only tasks** — require Test Engineer, Code Reviewer, and Acceptance Tester
    - Task is to add tests for existing functionality
    - No implementation changes needed (only test files)
    - Acceptance criteria focus on test coverage and test quality

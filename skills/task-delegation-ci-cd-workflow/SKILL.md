@@ -13,7 +13,7 @@ Invoke the **Code Reviewer** agent with:
 - The task description and acceptance criteria
 - The list of files to review
 - The project's coding conventions and style context
-- The current iteration number (1)
+- The current iteration number (1–4)
 
 ## Step 2: Verify
 
@@ -26,3 +26,7 @@ Invoke the **Acceptance Tester** agent with:
 
 - **If all acceptance criteria PASS**: proceed to task completion
 - **If the Code Reviewer identifies issues that require code changes**: the task scope has expanded beyond review-only. Update the current task's description to include the implementation work, then switch to the `task-delegation-engineering-workflow` skill to complete the remaining steps (write tests, implement, review, verify, document).
+- **If any acceptance criterion FAILS but no code changes are required** (e.g., the review output is missing required sections or format):
+  - Increment the iteration counter
+  - If iteration count exceeds 4: accept the review as-is, proceed to task completion
+  - Otherwise: return to Step 1 with the Acceptance Tester's failure findings so the Code Reviewer can produce a conforming review
