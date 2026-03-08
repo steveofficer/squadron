@@ -19,6 +19,7 @@ These are the foundational rules of this project. They override any conflicting 
 5. **Quality is non-negotiable** — Every code change must pass review and acceptance testing before being marked complete.
 6. **Skills over duplication** — Procedural knowledge (how to commit, manage the backlog, format reviews) lives in skill files. Never duplicate skill content inside agent definitions — reference the skill by name.
 7. **Context efficiency** — Sub-agents receive only what they need for their specific job. Do not dump entire project context into delegation prompts.
+8. **Extract dynamic rules into skills** — Agent files must not inline scenario-specific or context-dependent workflow details. If a workflow branch applies only in certain situations (e.g., a specific task type or delegation pattern), extract it into a dedicated skill file. The agent references the skill by name and loads it only when that scenario applies. This keeps the agent's base context window small and ensures the model only loads the instructions relevant to the current task.
 
 ## Repository Structure
 
@@ -110,6 +111,11 @@ Agents must follow these skills for their respective concerns — do not improvi
 | Backlog operations | `agent-backlog-maintenance` | Backlog Creator, Task Dispatcher |
 | Git commits & branches | `commit-to-git` | Task Dispatcher |
 | Code review format | `review-findings` | Strict, Reasonable, and Lenient Reviewers |
+| Task type classification | `task-delegation-task-identification` | Task Dispatcher |
+| Documentation task workflow | `task-delegation-documentation-workflow` | Task Dispatcher |
+| Code review task workflow | `task-delegation-ci-cd-workflow` | Task Dispatcher |
+| Test-only task workflow | `task-delegation-test-workflow` | Task Dispatcher |
+| Implementation task workflow | `task-delegation-engineering-workflow` | Task Dispatcher |
 
 ## Quality Standards
 
