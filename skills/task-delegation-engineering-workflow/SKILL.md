@@ -13,11 +13,11 @@ Invoke the **Test Engineer** agent with:
 - The full task description and acceptance criteria
 - The project's testing framework and conventions
 - Relevant codebase context: key file paths, architecture patterns, coding conventions
-- The instruction to write tests that correspond to each acceptance criterion **before any implementation exists** — these tests are expected to fail initially and will pass once the Backend Engineer completes the implementation
+- The instruction to write tests that correspond to each acceptance criterion **before any implementation exists** — these tests are expected to fail initially and will pass once the Software Engineer completes the implementation
 
 ## Step 2: Implement
 
-Invoke the **Backend Engineer** agent with a focused prompt containing:
+Invoke the **Software Engineer** agent with a focused prompt containing:
 - The full task description and acceptance criteria
 - The Test Engineer's summary of tests written (files, test names, what each test verifies)
 - Relevant codebase context: key file paths, architecture patterns, coding conventions
@@ -30,7 +30,7 @@ Invoke the **Backend Engineer** agent with a focused prompt containing:
 
 Invoke the **Code Reviewer** agent with:
 - The task description and acceptance criteria
-- The list of all files created or modified by the Test Engineer and Backend Engineer
+- The list of all files created or modified by the Test Engineer and Software Engineer
 - A summary of the implementation approach
 - The project's coding conventions and style context
 - The current iteration number (1–4)
@@ -50,7 +50,7 @@ Invoke the **Acceptance Tester** agent with:
   - Collect the Code Reviewer's rework instructions and the Acceptance Tester's failure findings
   - Increment the iteration counter
   - If iteration count exceeds 4: accept the code as-is, proceed to Step 6. Record any outstanding findings in the backlog but do not block completion — the code is as good as it will get.
-  - Otherwise: return to Step 2 with the combined feedback from the Code Review and Acceptance Test, instructing the Backend Engineer to address the specific issues (do not rewrite the TDD tests unless the acceptance criteria themselves have changed)
+  - Otherwise: return to Step 2 with the combined feedback from the Code Review and Acceptance Test, instructing the Software Engineer to address the specific issues (do not rewrite the TDD tests unless the acceptance criteria themselves have changed)
 
 ## Step 6: Document
 

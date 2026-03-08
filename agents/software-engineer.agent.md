@@ -1,5 +1,5 @@
 ---
-name: Backend Engineer
+name: Software Engineer
 description: Implements code changes for a single backlog task, following project conventions and ensuring changes pass existing tests.
 model: Claude Sonnet 4.6
 user-invocable: false

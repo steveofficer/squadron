@@ -39,7 +39,7 @@ flowchart TD
     BC["**Backlog Creator**<br/>Decomposes spec into discrete<br/>tasks with acceptance criteria"]:::autonomous
     DISP["**Task Dispatcher**<br/>Orchestrates all agents<br/>per task; retries on failure"]:::entrypoint
 
-    BE["**Backend Engineer**<br/>Implements code"]:::autonomous
+    BE["**Software Engineer**<br/>Implements code"]:::autonomous
     TE["**Test Engineer**<br/>Writes tests"]:::autonomous
     CR["**Code Reviewer**<br/>Synthesises a multi-perspective<br/>consolidated verdict"]:::autonomous
     AT["**Acceptance Tester**<br/>Verifies acceptance criteria"]:::autonomous
@@ -96,7 +96,7 @@ The **Backlog Creator** breaks the refined specification into small, discrete ta
 Invoke the **Task Dispatcher** agent to begin implementation. For each task, it:
 
 1. Delegates to **Test Engineer** to write tests first (TDD)
-2. Delegates to **Backend Engineer** to implement until the tests pass
+2. Delegates to **Software Engineer** to implement until the tests pass
 3. Delegates to **Code Reviewer** for a multi-perspective code review (strict, reasonable, and lenient)
 4. Delegates to **Acceptance Tester** for verification against acceptance criteria
 5. Re-attempts implementation if the code review or acceptance criteria aren't met (up to 4 iterations)
@@ -117,7 +117,7 @@ Takes the refined specification and decomposes it into small, independently impl
 ### Task Dispatcher
 The engineering manager. Reads the backlog, selects tasks in dependency and priority order, delegates to specialist agents, and ensures each task passes acceptance testing before marking it complete. Handles retries and escalation for blocked tasks.
 
-### Backend Engineer
+### Software Engineer
 Implements a single task from the backlog. Researches the codebase, writes production-quality code following project conventions, and verifies changes pass existing tests.
 
 ### Test Engineer

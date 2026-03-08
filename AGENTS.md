@@ -96,7 +96,7 @@ Squadron follows a structured workflow. Agents must respect this sequence:
 2. **Backlog Creator** → decompose the spec into tasks with acceptance criteria
 3. **Task Dispatcher** → for each task, orchestrate:
    - **Test Engineer** → write tests first (TDD)
-   - **Backend Engineer** → implement to pass the tests
+   - **Software Engineer** → implement to pass the tests
    - **Code Reviewer** → multi-perspective review (strict, reasonable, lenient)
    - **Acceptance Tester** → verify acceptance criteria are met
    - **Technical Writer** → update documentation
