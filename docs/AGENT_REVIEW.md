@@ -1,36 +1,38 @@
 # Squadron Agent & Skill Review
 
-**Date**: 8 March 2026
-**Scope**: Full analysis of all agents (12), skills (8), workflow design, and comparison with current multi-agent research.
+**Last Updated**: 8 March 2026 (Revision 2)
+**Scope**: Full analysis of all agents (12), skills (8), workflow design, source/installed drift, and cross-reference consistency.
 
 ---
 
 ## Table of Contents
 
 - [1. Inventory Summary](#1-inventory-summary)
-- [2. Agent-by-Agent Assessment](#2-agent-by-agent-assessment)
-- [3. Skill-by-Skill Assessment](#3-skill-by-skill-assessment)
-- [4. Architectural Analysis](#4-architectural-analysis)
-- [5. Gap Analysis — What's Missing](#5-gap-analysis--whats-missing)
-- [6. Redundancy Analysis — What Could Be Removed](#6-redundancy-analysis--what-could-be-removed)
-- [7. Multi-Agent Research Findings](#7-multi-agent-research-findings)
-- [8. Recommendations](#8-recommendations)
-- [9. Summary Matrix](#9-summary-matrix)
+- [2. Changes Since Last Review](#2-changes-since-last-review)
+- [3. Critical Finding: Source/Installed Drift](#3-critical-finding-sourceinstalled-drift)
+- [4. Agent-by-Agent Assessment](#4-agent-by-agent-assessment)
+- [5. Skill-by-Skill Assessment](#5-skill-by-skill-assessment)
+- [6. Cross-Reference Consistency Audit](#6-cross-reference-consistency-audit)
+- [7. Architectural Analysis](#7-architectural-analysis)
+- [8. Gap Analysis — What's Missing](#8-gap-analysis--whats-missing)
+- [9. Redundancy Analysis — What Could Be Removed](#9-redundancy-analysis--what-could-be-removed)
+- [10. Recommendations](#10-recommendations)
+- [11. Summary Matrix](#11-summary-matrix)
 
 ---
 
 ## 1. Inventory Summary
 
-### Agents (12)
+### Agents (12 source files in `agents/`)
 
 | Agent | User-Invokable | Delegates To | Role |
 |-------|:-:|---|---|
 | Refine Requirements | Yes | Backlog Creator, Requirement Conflict Resolver | Entry point — req analysis |
 | Requirement Conflict Resolver | No | — | Conflict analysis |
 | Backlog Creator | No | — | Task decomposition |
-| Task Dispatcher | Yes | Backend Engineer, Test Engineer, Code Reviewer, Acceptance Tester, Technical Writer | Orchestration |
+| Task Dispatcher | Yes | Software Engineer, Test Engineer, Code Reviewer, Acceptance Tester, Technical Writer | Orchestration |
 | Test Engineer | No | — | Test authoring |
-| Backend Engineer | No | — | Implementation |
+| Software Engineer | No | — | Implementation |
 | Code Reviewer | No | Strict, Reasonable, Lenient Reviewers | Review orchestration |
 | Strict Reviewer | No | — | Exhaustive review |
 | Reasonable Reviewer | No | — | Pragmatic review |
@@ -53,56 +55,142 @@
 
 ---
 
-## 2. Agent-by-Agent Assessment
+## 2. Changes Since Last Review
+
+The first review (Revision 1) was conducted against the pre-rename codebase. Since then, backlog tasks 002–005 completed the **Backend Engineer → Software Engineer rename**:
+
+| What Changed | Details |
+|---|---|
+| Agent file renamed | `agents/backend-engineer.agent.md` → `agents/software-engineer.agent.md` |
+| Frontmatter updated | `name: Software Engineer` |
+| Source references updated | All occurrences of "Backend Engineer" in `agents/`, `skills/`, `AGENTS.md`, `README.md` now say "Software Engineer" |
+
+**Previous Revision 1 recommendations resolved:**
+
+| # | Recommendation | Status |
+|---|---|---|
+| 2 | Rename "Backend Engineer" to "Software Engineer" | ✅ Completed (tasks 002–005) |
+
+**Previous Revision 1 recommendations still open:**
+
+| # | Recommendation | Status |
+|---|---|---|
+| 1 | Add error recovery guidance to Task Dispatcher | Open |
+| 3 | Add task sizing guidance to Backlog Creator | Open |
+| 4 | Clarify Test Engineer's dual mode | Open |
+| 5 | Add a skill for sub-agent failure handling patterns | Open |
+| 6 | Consider cross-session memory | Open (low priority) |
+| 7 | Document agent extensibility in README | Open (low priority) |
+| 8 | Add integration test guidance to Test Engineer | Open (low priority) |
+
+---
+
+## 3. Critical Finding: Source/Installed Drift
+
+**Severity: HIGH — This is the most important finding in this review.**
+
+The `.github/` installed artifacts (which Squadron uses to develop itself) have drifted significantly from the `/agents/` and `/skills/` source files. Per AGENTS.md, "A human updates these installed copies when they decide it is time." The current drift is so substantial that the installed agents are effectively running a **different system** from what the source defines.
+
+### 3.1 File-Level Drift
+
+| Component | Source (`agents/` or `skills/`) | Installed (`.github/`) | Drift |
+|---|---|---|---|
+| Implementation agent | `software-engineer.agent.md` | `backend-engineer.agent.md` | **Wrong filename and name** |
+| Task Dispatcher `agents:` field | `["Software Engineer", ...]` | `["Backend Engineer", ...]` | **References wrong agent name** |
+| Backlog Creator | Has milestone support (§3–§7) | No milestone concept at all | **Major feature gap** |
+| Refine Requirements | Delegates with milestone instructions | No milestone mention | Feature gap |
+| Task Dispatcher | Milestone-scoped processing, branch-per-milestone | Branch-per-task, no milestone awareness | **Major workflow difference** |
+| commit-to-git skill | `<type>/M<N>-<milestone-slug>` | `<type>/<task-id>` | **Different branching model** |
+| agent-backlog-maintenance skill | Has Milestone field, milestone tables, milestone counts | No milestone concept | **Major schema gap** |
+| task-delegation-engineering-workflow | References "Software Engineer" | References "Backend Engineer" | Name mismatch |
+| task-delegation-task-identification | References "Software Engineer" | References "Backend Engineer" | Name mismatch |
+
+### 3.2 Impact
+
+Since Squadron is developed using its **installed** agents (in `.github/`), the following consequences are observable:
+
+1. **Existing backlog files lack milestone support.** The `backlog/README.md` master index has no `Milestones` count table. The `backlog/active/README.md` has no `## Milestones` table. The `backlog/completed/README.md` has no `## Completed Milestones` table. Completed task files have no `## Milestone` field. All of this is because the installed Backlog Creator doesn't know about milestones.
+
+2. **The installed Task Dispatcher references "Backend Engineer"** in its `agents:` frontmatter. In Copilot's agent framework, this means it attempts to delegate to an agent named "Backend Engineer" — and `.github/agents/backend-engineer.agent.md` still exists (unchanged), so delegation currently works. However, the source intent is "Software Engineer", and new installations via `npx squadron` will install the source files (with `software-engineer.agent.md` and no `backend-engineer.agent.md`).
+
+3. **Branch naming is inconsistent.** The source system creates branches per milestone (`feat/M1-user-auth`); the installed system creates branches per task (`feat/003-add-token-refresh`). The existing git history follows the per-task model.
+
+### 3.3 Recommendation
+
+**Re-install the source agents and skills into `.github/`.** Until this is done, the project is developing against an older version of its own agent system. This is the single highest-priority action item from this review.
+
+After re-installation, the existing backlog structure will need a one-time migration to add milestone fields to any remaining active task files and update the index formats.
+
+---
+
+## 4. Agent-by-Agent Assessment
 
 ### Refine Requirements — ✅ Well-designed
 
 **Strengths:**
-- Thorough 4-phase workflow (Understand → Analyze → Detect Conflicts → Synthesize)
+- Thorough 5-phase workflow (Understand → Analyze → Detect Conflicts → Synthesize → Delegate)
 - Excellent conflict detection pipeline with escalation to the user
-- Includes TDD test scenario generation in the spec — this bridges requirements to implementation cleanly
+- Includes TDD test scenario generation in the spec — bridges requirements to implementation
 - Good use of `askQuestions` tool with batching guidance
 
 **Observations:**
-- Phase 3 (conflict detection) is comprehensive — it proactively checks existing code before finalizing. This is unusually mature for multi-agent setups and addresses a common failure mode where new features break existing behavior.
-- The agent has a dual role: requirements refinement AND delegation to Backlog Creator. This is acceptable because the handoff is a natural terminal step, not a parallel responsibility.
+- Phase 3 (conflict detection) is comprehensive — it proactively checks existing code before finalizing. This addresses a common failure mode where new features break existing behavior.
+- The agent has a dual role: requirements refinement AND delegation to Backlog Creator. Acceptable because the handoff is a natural terminal step, not a parallel responsibility.
 
 ### Requirement Conflict Resolver — ✅ Well-designed
 
 **Strengths:**
 - Clear three-outcome model (Resolved / False Alarm / Unresolvable)
 - Explicit anti-patterns (no configuration toggles, no hand-waving)
-- Read-only — cannot modify files, only analyzes
+- Read-only — `tools: [read, search]` prevents file modification
 
 **Observations:**
-- Appropriately scoped as a non-user-invokable specialist. It has one clear job.
-- The "no feature toggles" rule is a strong design choice that prevents deferred conflict resolution.
+- Appropriately scoped as a non-user-invocable specialist with one clear job.
+- The "no feature toggles" rule prevents deferred conflict resolution — good design choice.
 
-### Backlog Creator — ✅ Well-designed
+### Backlog Creator — ✅ Well-designed, minor issue
 
 **Strengths:**
 - Clear task decomposition guidance with acceptance criteria format
-- Sequential numbering with dependency tracking
-- References the `agent-backlog-maintenance` skill correctly
+- Milestone grouping with sizing guidelines (3–8 tasks per milestone)
+- References the `agent-backlog-maintenance` skill for index creation
 
-**Observations:**
-- The agent creates backlog structure from scratch if it doesn't exist — good for first-run scenarios.
-- Missing: no guidance on task size estimation or complexity limits. This could lead to inconsistently sized tasks (some trivially small, some too large for a single agent pass). Consider adding a heuristic like "each task should affect 1–3 files."
+**Issue — Task template duplicated with minor inconsistencies:**
 
-### Task Dispatcher — ✅ Well-designed, minor concerns
+The Backlog Creator inlines its own task template (§5) which is nearly identical to the template in the `agent-backlog-maintenance` skill, but with small differences:
+
+| Field | Backlog Creator template | agent-backlog-maintenance skill template |
+|---|---|---|
+| Implementation Notes comment | `<!-- Populated by the implementing agent -->` | `<!-- Populated by the Software Engineer after implementation -->` |
+| Dependencies placeholder | `<List task IDs this depends on, or "None">` | `<Comma-separated task IDs (e.g., "001, 002"), or "None">` |
+| Description placeholder | `<Clear, specific description of what needs to be implemented>` | Includes: `Include enough context that the implementing agent does not need to reference the original specification.` |
+| Status placeholder | `pending` (only value shown) | `<pending\|in-progress\|completed\|blocked>` (all values shown) |
+
+The Backlog Creator's `<!-- Populated by the implementing agent -->` is actually more correct than the skill's `<!-- Populated by the Software Engineer after implementation -->`, because documentation-only tasks are implemented by the Technical Writer, not the Software Engineer.
+
+**Recommendation:** Consolidate the template. The Backlog Creator should reference the `agent-backlog-maintenance` skill's template rather than defining its own. Alternatively, make both templates identical and use the Backlog Creator's more general "implementing agent" wording.
+
+### Task Dispatcher — ✅ Well-designed, minor issue
 
 **Strengths:**
-- Intelligent task classification before delegation (Step 0)
+- Intelligent task classification before delegation (Step 2a)
 - Four distinct workflow paths based on task type
 - 4-iteration limit prevents infinite rework loops
 - Branch creation per milestone for clean git history
 - Milestone-scoped processing with user milestone selection
 - Comprehensive delegation guidelines with context efficiency
 
-**Observations:**
-- This is the most complex agent and carries the most responsibility. It's effectively the "engineering manager" of the system.
-- The 4-iteration limit is a pragmatic choice. Research suggests 3–5 iterations is the sweet spot before diminishing returns.
-- The agent handles both orchestration and backlog management (moving files, updating indexes). This is acceptable given the sequential nature of the work, but it does make this agent's prompt considerably longer than others.
+**Issue — Task discovery logic duplicated from skill:**
+
+The Task Dispatcher's Step 1 inlines specific `grep_search` and `file_search` patterns for task discovery:
+```
+1. Use `grep_search` with pattern `^pending$` and `includePattern` set to `backlog/active/*.md`
+3. For each task, verify its dependencies are completed by checking for the dependency file in `backlog/completed/` using `file_search`
+```
+
+These exact patterns are already defined in the `agent-backlog-maintenance` skill under "Task Discovery" and "Find the next task to work on." Per Principle 6 ("Skills over duplication — Never duplicate skill content inside agent definitions"), the Task Dispatcher should reference the skill instead of inlining the patterns.
+
+**Recommendation:** Replace the inline discovery steps with a reference: "Follow the `agent-backlog-maintenance` skill's 'Find the next task to work on' procedure, filtering to tasks belonging to the current milestone."
 
 ### Test Engineer — ✅ Well-designed
 
@@ -112,95 +200,94 @@
 - Framework-agnostic — adapts to whatever the project uses
 
 **Observations:**
-- The agent is used in both TDD mode (write tests before implementation) and verification mode (write tests after implementation). The prompt handles both implicitly through the input it receives, but doesn't explicitly acknowledge these two modes. Adding a note about this dual usage could improve clarity.
+- The agent is used in both TDD mode (write tests before implementation) and post-implementation mode (write tests after code exists). The prompt handles both implicitly through the input it receives (the engineering workflow says "before any implementation exists"; the test workflow says "existing implementation that needs test coverage"), but doesn't explicitly acknowledge these two modes within its own definition.
 
-### Backend Engineer — ✅ Well-designed
+### Software Engineer — ✅ Well-designed
 
 **Strengths:**
 - Tight scope: one task at a time, no scope creep
 - Research → Plan → Implement → Verify cycle
 - Explicit constraint: "never modify code outside the scope"
+- Self-verification: runs existing tests to check for regressions
 
 **Observations:**
-- Named "Backend Engineer" but the project is a CLI tool with no backend/frontend distinction. The name could be misleading for users who adopt Squadron. "Software Engineer" or "Implementation Engineer" might be more accurate.
-- No guidance on what to do when a test written by the Test Engineer appears incorrect — the engineer is told to make tests pass, but sometimes the test itself may be wrong. Current design assumes the Code Reviewer catches this.
+- Now correctly named "Software Engineer" — technology-neutral, matching the prompt's generic implementation guidance.
+- No guidance on what to do when a pre-written TDD test appears incorrect — the engineer is told to make tests pass, but sometimes the test itself may be wrong. The current design relies on the Code Reviewer to catch this, which is a reasonable separation of concerns.
 
 ### Code Reviewer — ✅ Well-designed, standout feature
 
 **Strengths:**
-- Multi-perspective review is a genuinely novel approach
-- The confidence classification framework (confirmed/likely/potential/nitpick/show-stopper) is well-thought-out
+- Multi-perspective review with confidence classification framework
 - Iteration awareness (relaxed criteria on iteration 4) prevents infinite loops
-- The Strict + Lenient combination being treated as a show-stopper is clever — it catches issues that the Reasonable reviewer might normalize
+- Strict + Lenient agreement treated as show-stopper — catches issues the Reasonable reviewer might normalize
+- Clear deduplication rules for overlapping findings
 
 **Observations:**
-- This is the most sophisticated agent in the system and embodies a key research insight: ensemble approaches produce better judgments than single-reviewer systems.
-- The tri-reviewer pattern uses 3 sub-agent calls per review. Under the Premium Request model, these run as background agents so cost is manageable, but it's worth noting that this is the most agent-intensive single step.
+- The most sophisticated agent in the system. The tri-reviewer ensemble with confidence classification is the system's signature architectural decision.
+- Uses 3 sub-agent calls per review — cost-effective under Premium Request billing where background agents don't consume the user's quota.
 
 ### Strict Reviewer — ✅ Well-designed
 
-**Strengths:**
-- Clear mandate: flag everything
-- Well-categorized review areas (correctness, quality, conventions, edge cases, readability)
+- Clear mandate: flag everything, well-categorized review areas
 - Uses the `review-findings` skill for consistent output format
-
-**Observations:**
-- Functions exactly as designed — the "catch everything" reviewer whose unique findings become optional nitpicks.
+- Functions as designed — unilateral findings become optional nitpicks in the consolidated review
 
 ### Reasonable Reviewer — ✅ Well-designed
 
-**Strengths:**
-- Explicit "what to ignore" section — this is critical for preventing the reasonable reviewer from becoming another strict reviewer
-- Focus on security is appropriate given its role as the "what matters" reviewer
-
-**Observations:**
-- The "empty review is a valid review" guidance is important — it prevents the reviewer from manufacturing findings to justify its existence.
+- Explicit "what to ignore" section prevents scope creep into nitpicking
+- Focus on security is appropriate for the "what matters" reviewer
+- "Empty review is a valid review" guidance prevents manufactured findings
 
 ### Lenient Reviewer — ✅ Well-designed
 
-**Strengths:**
 - Very tight scope: broken logic, security holes, catastrophic issues only
 - Extensive "what to ignore" list keeps signal-to-noise high
-
-**Observations:**
-- The most important property of this agent is that when it DOES flag something, the Code Reviewer treats it as high-severity. This asymmetry is well-captured in the Code Reviewer's synthesis logic.
+- Asymmetric severity: when this reviewer flags something, the Code Reviewer treats it as high-severity
 
 ### Acceptance Tester — ✅ Well-designed
 
-**Strengths:**
-- Evidence-driven verification (not opinion-based)
-- Updates the backlog file directly with findings
-- Clear PASS/FAIL per criterion with evidence requirements
+- Evidence-driven verification with per-criterion PASS/FAIL
+- Has `edit` tools scoped to backlog file updates (not implementation code)
+- Runs the full test suite via `execute` tool
 
-**Observations:**
-- The acceptance tester has `edit` tools to update the backlog file. This is the right scope — it needs to record findings but shouldn't modify implementation code.
-
-### Technical Writer — ✅ Well-designed
+### Technical Writer — ✅ Well-designed, minor issue
 
 **Strengths:**
 - Emphasis on diagrams over prose (Mermaid support)
 - Keep a Changelog format compliance
-- Verification step to catch broken references
+- Clear document impact analysis workflow
 
-**Observations:**
-- The CHANGELOG guidance follows a well-established standard. Good choice.
-- The agent is invoked at the end of implementation workflows, which is correct — you can't document what hasn't been built yet.
+**Issue — CHANGELOG.md referenced but doesn't exist:**
+
+The Technical Writer's workflow (§2) states: `CHANGELOG.md: always — every completed task gets a changelog entry`. However, no `CHANGELOG.md` file exists in the project. The "always" directive creates a confusing instruction — the writer is told to update a file that doesn't exist.
+
+**Evidence:** `file_search` for `CHANGELOG*` returns no results. The completed backlog tasks (001–005) do not include changelog entries, confirming the Technical Writer has been operating without this file.
+
+**Recommendation:** Either (a) create a `CHANGELOG.md` to match the agent's expectation, or (b) change the "always" directive to "if the project has a CHANGELOG.md" so the instruction is conditional.
+
+**Issue — No `execute` tool:**
+
+The Technical Writer has `tools: [read, edit, search]` — no `execute`. Its workflow step 5 says "Verify: Confirm all documentation references are accurate" and "Ensure code examples are syntactically correct." Without `execute`, the writer cannot run any verification commands. This is mitigated by the Acceptance Tester (which has `execute`) handling post-hoc verification, but it means the writer's own verification step is limited to visual inspection.
 
 ---
 
-## 3. Skill-by-Skill Assessment
+## 5. Skill-by-Skill Assessment
 
-### agent-backlog-maintenance — ✅ Comprehensive
+### agent-backlog-maintenance — ✅ Comprehensive, minor issue
 
-- Separation of active/completed into distinct directories is a strong design choice for context efficiency
-- Tool-based task discovery (grep, file_search) is more efficient than parsing file contents
+- Separation of active/completed into distinct directories is strong for context efficiency
+- Tool-based task discovery procedures are detailed and practical
 - Clear status lifecycle: pending → in-progress → completed/blocked
+- Milestone lifecycle (pending → in-progress → completed) with derived status is well-defined
+
+**Issue:** The Implementation Notes template comment says `<!-- Populated by the Software Engineer after implementation -->`. This is too specific — documentation-only tasks are implemented by the Technical Writer. Should say "implementing agent" (matching the Backlog Creator's template) or list both: "Software Engineer or Technical Writer."
 
 ### commit-to-git — ✅ Clean and sufficient
 
 - Conventional Commits is a well-established standard
-- Branch naming tied to task IDs provides traceability
+- Milestone-based branch naming (`<type>/M<N>-<milestone-slug>`) provides traceability
 - One commit per task keeps history clean
+- "All tasks within a milestone share the same branch" is clearly stated
 
 ### review-findings — ✅ Essential for consistency
 
@@ -237,7 +324,77 @@
 
 ---
 
-## 4. Architectural Analysis
+## 6. Cross-Reference Consistency Audit
+
+This section verifies that all names, references, and cross-links between agents, skills, and documentation are internally consistent.
+
+### 6.1 Agent Names — Source Files ✅
+
+All 12 source agent files have consistent `name:` frontmatter:
+
+| File | `name:` |
+|---|---|
+| `acceptance-tester.agent.md` | Acceptance Tester |
+| `backlog-creator.agent.md` | Backlog Creator |
+| `code-reviewer.agent.md` | Code Reviewer |
+| `lenient-reviewer.agent.md` | Lenient Reviewer |
+| `reasonable-reviewer.agent.md` | Reasonable Reviewer |
+| `refine-requirements.agent.md` | Refine Requirements |
+| `requirement-conflict-resolver.agent.md` | Requirement Conflict Resolver |
+| `software-engineer.agent.md` | Software Engineer |
+| `strict-reviewer.agent.md` | Strict Reviewer |
+| `task-dispatcher.agent.md` | Task Dispatcher |
+| `technical-writer.agent.md` | Technical Writer |
+| `test-engineer.agent.md` | Test Engineer |
+
+### 6.2 Delegation `agents:` Fields ✅
+
+| Delegator | `agents:` list | All targets exist as source files? |
+|---|---|---|
+| Refine Requirements | `["Backlog Creator", "Requirement Conflict Resolver"]` | ✅ |
+| Task Dispatcher | `["Software Engineer", "Test Engineer", "Code Reviewer", "Acceptance Tester", "Technical Writer"]` | ✅ |
+| Code Reviewer | `["Strict Reviewer", "Reasonable Reviewer", "Lenient Reviewer"]` | ✅ |
+
+### 6.3 Model Consistency ✅
+
+All 12 agents use `model: Claude Sonnet 4.6`. No mismatches.
+
+### 6.4 Tool Assignments ✅
+
+| Agent | Tools | Appropriate? |
+|---|---|---|
+| Refine Requirements | `read, search, agent, vscode/askQuestions` | ✅ Needs agent delegation and user interaction |
+| Requirement Conflict Resolver | `read, search` | ✅ Read-only analysis |
+| Backlog Creator | `read, search, edit` | ✅ Creates backlog files |
+| Task Dispatcher | `read, edit, search, execute, agent, todo` | ✅ Full orchestration |
+| Test Engineer | `read, edit, execute, search` | ✅ Writes and runs tests |
+| Software Engineer | `read, edit, execute, search` | ✅ Implements and verifies |
+| Code Reviewer | `read, search, agent` | ✅ Delegates to sub-reviewers, read-only |
+| Strict/Reasonable/Lenient Reviewers | `read, search` | ✅ Read-only review |
+| Acceptance Tester | `read, edit, execute, search` | ✅ Runs tests, updates backlog |
+| Technical Writer | `read, edit, search` | ⚠️ No `execute` — cannot verify code examples (see §4) |
+
+### 6.5 Skill References in Source Agents ✅
+
+| Agent | References Skill | Skill Exists? |
+|---|---|---|
+| Backlog Creator | `agent-backlog-maintenance` | ✅ |
+| Task Dispatcher | `commit-to-git`, `task-delegation-task-identification`, `task-delegation-*-workflow` (4) | ✅ All 6 |
+| Strict Reviewer | `review-findings` | ✅ |
+| Reasonable Reviewer | `review-findings` | ✅ |
+| Lenient Reviewer | `review-findings` | ✅ |
+
+### 6.6 AGENTS.md Skill Reference Table ✅
+
+The table in AGENTS.md lists 8 skills with their consumers. All mappings match the actual agent/skill content.
+
+### 6.7 README.md Agent Descriptions ✅
+
+All 12 agents are documented in the "Meet the Agents" section with accurate descriptions. The Mermaid flowchart correctly shows the delegation topology with the Software Engineer name.
+
+---
+
+## 7. Architectural Analysis
 
 ### Delegation Topology
 
@@ -248,7 +405,7 @@ User
  │    └── Backlog Creator
  └── Task Dispatcher (entry)
       ├── Test Engineer
-      ├── Backend Engineer
+      ├── Software Engineer
       ├── Code Reviewer
       │    ├── Strict Reviewer
       │    ├── Reasonable Reviewer
@@ -259,7 +416,7 @@ User
 
 **Maximum delegation depth**: 3 levels (User → Task Dispatcher → Code Reviewer → Strict/Reasonable/Lenient)
 
-This is within the recommended range. Research suggests that delegation chains beyond 4 levels suffer from context degradation and error amplification.
+This is within the recommended range. Delegation chains beyond 4 levels suffer from context degradation and error amplification.
 
 ### Context Flow Analysis
 
@@ -268,220 +425,138 @@ This is within the recommended range. Research suggests that delegation chains b
 | User → Refine Requirements | High | User provides raw spec, agent researches codebase |
 | Refine Requirements → Backlog Creator | High | Refined spec is comprehensive |
 | Task Dispatcher → Test Engineer | Medium | Task description + codebase context; no prior implementation |
-| Task Dispatcher → Backend Engineer | High | Task + test summary + codebase context |
+| Task Dispatcher → Software Engineer | High | Task + test summary + codebase context |
 | Task Dispatcher → Code Reviewer | High | Task + file list + implementation summary |
 | Code Reviewer → Sub-reviewers | High | Same context provided to all three |
 | Task Dispatcher → Acceptance Tester | High | Task + implementation + test summaries |
 | Task Dispatcher → Technical Writer | Medium | Summary of changes; writer must research docs independently |
 
-The weakest handoff is Task Dispatcher → Technical Writer, where the writer receives a summary but may need to re-read implementation code to produce accurate documentation. This is acceptable given the writer has read/search tools.
+The weakest handoff is Task Dispatcher → Technical Writer, where the writer receives a summary but may need to re-read implementation code. Acceptable given the writer has read/search tools.
 
 ### Feedback Loop Design
 
-The system has one feedback loop: the Code Review + Acceptance Test → rework cycle in the engineering workflow. This loop is:
+The system has one feedback loop: the Code Review + Acceptance Test → rework cycle. This loop is:
 
 - **Bounded**: max 4 iterations
 - **Convergent**: iteration 4 relaxes criteria to force termination
 - **Informative**: each iteration passes specific rework instructions, not generic "try again"
 
-This is well-designed. Unbounded feedback loops are the most common failure mode in multi-agent systems.
+Well-designed. Unbounded feedback loops are the most common failure mode in multi-agent systems.
 
 ---
 
-## 5. Gap Analysis — What's Missing
+## 8. Gap Analysis — What's Missing
 
-### 5.1 Error Recovery Agent — Medium Priority
+### 8.1 Error Recovery Guidance — Medium Priority
 
-**Gap**: No agent handles the case where a sub-agent fails catastrophically (e.g., produces no output, halts mid-task, generates invalid code that crashes the test suite). The Task Dispatcher has a 4-iteration limit but no explicit error recovery strategy.
+**Gap**: No explicit handling for sub-agent catastrophic failures (crash, no output, build-breaking code). The Task Dispatcher has a 4-iteration limit but no error recovery strategy.
 
-**Impact**: If the Backend Engineer produces code that causes a build-breaking error (not just a failing test), the system has no specialized recovery path.
+**Impact**: If the Software Engineer produces code that causes a build-breaking error (not just a failing test), the system has no specialized recovery path.
 
-**Recommendation**: This could be addressed by adding error recovery guidance to the Task Dispatcher's prompt rather than a new agent. A "What to do when a sub-agent fails" section would cover this.
+**Recommendation**: Add a "When a sub-agent fails" section to the Task Dispatcher covering: retry with simplified context, skip and report blocked, escalate to user.
 
-### 5.2 Security Reviewer — Low Priority
+### 8.2 Security Reviewer — Low Priority
 
-**Gap**: Security review is distributed across three reviewer agents (the Reasonable Reviewer has the most explicit guidance). There is no dedicated security-focused reviewer.
+**Gap**: Security review is distributed across three reviewer agents (the Reasonable Reviewer has the most explicit guidance).
 
 **Impact**: For this project (an npm CLI tool), the risk is low. For users adopting Squadron for web applications or API services, a dedicated security review may be warranted.
 
-**Recommendation**: Not needed for Squadron itself. If the project evolves to target security-sensitive domains, consider adding a Security Reviewer as a fourth sub-reviewer under the Code Reviewer. For now, the Reasonable Reviewer's security focus is adequate.
+**Recommendation**: Not needed for Squadron. The Reasonable Reviewer's security focus is adequate for this project's risk profile.
 
-### 5.3 Frontend Engineer — Low Priority (by design)
+### 8.3 Integration/E2E Test Guidance — Low Priority
 
-**Gap**: Only a "Backend Engineer" exists. No frontend equivalent.
+**Gap**: The Test Engineer focuses on unit tests. No dedicated integration testing strategy.
 
-**Impact**: Squadron is a CLI tool — no frontend exists. However, users adopting Squadron for full-stack projects would need to extend the agent set.
+**Impact**: For Squadron's own codebase (a CLI with simple file operations), this is fine.
 
-**Recommendation**: Rename "Backend Engineer" to "Software Engineer" or "Implementation Engineer" to make it technology-neutral. The prompt is already generic enough to handle any implementation work. Alternatively, document in the README that users can duplicate and rename agents for additional specializations.
-
-### 5.4 Integration/E2E Test Guidance — Low Priority
-
-**Gap**: The Test Engineer focuses on unit tests ("prefer small focused unit tests; use integration tests only for cross-component behavior"). There's no dedicated integration or end-to-end testing strategy.
-
-**Impact**: For Squadron's own codebase (a CLI with simple file operations), this is fine. More complex projects may need integration test guidance.
-
-**Recommendation**: Consider adding a paragraph to the Test Engineer's prompt about when and how to write integration tests, especially for the CLI installer itself.
-
-### 5.5 Planner/Architect Agent — Low Priority
-
-**Gap**: No agent handles high-level architectural decisions or design patterns. The Refine Requirements agent does some architectural thinking during conflict detection, but it's not its primary role.
-
-**Impact**: For small-to-medium features, the current system is fine. For large-scale refactors or architectural changes, a dedicated planning step may improve quality.
-
-**Recommendation**: Not needed now. The Refine Requirements agent's Phase 1 (codebase research) and Phase 3 (conflict detection) provide adequate architectural awareness for the project's current scope.
-
-### 5.6 Dependency/Environment Management — Not Needed
-
-**Gap**: No agent manages dependencies (npm packages, version conflicts) or environment setup.
-
-**Impact**: Squadron has only 2 runtime dependencies and no build step. This gap is by design.
-
-**Recommendation**: No action needed. The `package.json` convention ("Minimize additions. Justify any new dependency.") addresses this at the rule level.
+**Recommendation**: Consider adding a paragraph about when integration tests are appropriate.
 
 ---
 
-## 6. Redundancy Analysis — What Could Be Removed
+## 9. Redundancy Analysis — What Could Be Removed
 
-### 6.1 Three Sub-Reviewers → Could Be Two? — **Keep All Three**
+### 9.1 Three Sub-Reviewers — **Keep All Three**
 
-The strict/reasonable/lenient pattern uses 3 agent invocations per review. Could this be reduced?
+The confidence classification (unanimous = confirmed, one-only = nitpick/show-stopper) requires three data points. Reducing to two would lose nuance.
 
-**Analysis**: The three-reviewer pattern is the system's most sophisticated feature. The confidence classification (unanimous = confirmed, one-only = nitpick/show-stopper) requires at least three data points for meaningful triangulation. Reducing to two would lose the ability to distinguish "likely" from "confirmed" findings.
+### 9.2 Acceptance Tester vs. Test Engineer — **Keep Both**
 
-**Verdict**: Keep all three. The cost is 3 background agent calls (free under Premium Request billing), and the quality improvement justifies the added complexity.
+Distinct roles: Test Engineer writes tests (producer), Acceptance Tester verifies criteria (verifier). The Acceptance Tester checks criteria that may not be automatable.
 
-### 6.2 Acceptance Tester vs. Test Engineer — **Keep Both**
+### 9.3 Four Workflow Skills — **Keep All Four**
 
-These agents have clearly distinct roles:
-- **Test Engineer**: writes automated tests (producer)
-- **Acceptance Tester**: verifies acceptance criteria are met (verifier)
+Follows Principle 8. Each is loaded only when needed, keeping context windows small.
 
-They are not redundant. The Acceptance Tester checks criteria that may not be fully captured by automated tests (e.g., documentation completeness, backlog file updates).
+### 9.4 Requirement Conflict Resolver — **Keep**
 
-**Verdict**: Keep both. They serve different functions in the quality pipeline.
-
-### 6.3 Four Task Delegation Workflow Skills — **Keep All Four**
-
-Could the four workflow skills (documentation, CI/CD, test, engineering) be collapsed into a single skill with conditional logic?
-
-**Analysis**: The current design follows the project's Principle 8: "Extract dynamic rules into skills." Each workflow is loaded only when the corresponding task type is identified. Collapsing them would increase the context window for every task, even when most of the content is irrelevant.
-
-**Verdict**: Keep all four. The context efficiency gain justifies the additional files.
-
-### 6.4 Requirement Conflict Resolver — **Keep**
-
-Could this be folded into the Refine Requirements agent?
-
-**Analysis**: The conflict resolver performs deep codebase investigation (Phase 1) and multi-approach resolution analysis (Phase 2). Adding this to the Refine Requirements agent would significantly increase its prompt size and conflate two distinct responsibilities: "understand what the user wants" vs. "determine if it conflicts with what exists."
-
-**Verdict**: Keep separate. Follows Principle 3: "One job per agent."
+Follows Principle 3 (one job per agent). Folding into Refine Requirements would bloat its context.
 
 ---
 
-## 7. Multi-Agent Research Findings
+## 10. Recommendations
 
-### 7.1 Key Findings from Recent Research (2024–2026)
+### Critical Priority
 
-**Specialization Outperforms Generalization**
-Studies from Microsoft Research (AutoGen, 2024), Google DeepMind (multi-agent debate, 2024), and Stanford HAI (generative agents, 2024–2025) consistently show that **specialized single-role agents outperform general-purpose agents** on complex tasks. The quality improvement is proportional to how well the agent's context is tailored to its specific job. Squadron's design aligns with this finding.
-
-**Ensemble Review Improves Judgment**
-Research on multi-agent debate (Du et al., 2024; Liang et al., 2024) demonstrates that having multiple agents independently evaluate the same artifact and then synthesizing their findings produces **more accurate and calibrated judgments** than a single reviewer. Squadron's tri-reviewer pattern with confidence classification is a strong implementation of this principle.
-
-**Context Window Pollution Degrades Performance**
-Anthropic's research on long-context performance (2024–2025) and OpenAI's findings on instruction-following degradation show that **agent performance drops measurably when context windows contain irrelevant information**. Squadron's skill-based context loading (only load the workflow skill you need) and sub-agent context scoping ("provide only what that specialist needs") are well-aligned with this finding.
-
-**Bounded Iteration Prevents Divergence**
-Research from both academic (MIT CSAIL multi-agent coordination, 2025) and industry (Devin post-mortems, Cursor agent feedback loops) sources identifies **unbounded iteration as the leading failure mode** in agentic coding systems. Agents enter "improvement loops" where each iteration makes marginal changes that trigger new review findings, never converging. Squadron's 4-iteration cap with progressive relaxation (iteration 4 accepts diminishing returns) directly addresses this.
-
-**Explicit Role Separation Reduces Error Propagation**
-Work on agent-to-agent delegation (CrewAI benchmarks, 2024; LangGraph coordination patterns, 2025) shows that **clear role boundaries reduce cascading errors**. When an agent's scope is well-defined, errors are contained within that scope rather than propagating through the system. Squadron's strict scope constraints ("never modify code outside scope", "your role is to review, not fix") implement this principle effectively.
-
-**TDD Ordering Matters for Agent Systems**
-Empirical findings from Cognition (Devin) and various coding agent benchmarks (SWE-bench, 2024–2025) suggest that **writing tests before implementation significantly improves agent-generated code quality**. The tests serve as a concrete, executable specification that constrains the implementation agent's output. Squadron's TDD-first workflow in the engineering skill aligns perfectly with this.
-
-### 7.2 How Squadron Compares to Leading Multi-Agent Frameworks
-
-| Dimension | Squadron | AutoGen | CrewAI | LangGraph |
-|-----------|---------|---------|--------|-----------|
-| Specialization | Strong (12 single-role agents) | Moderate (roles defined per conversation) | Strong (role-based agents) | Variable (graph nodes can be generic) |
-| Context control | Strong (skill-based loading, scoped delegation) | Weak (shared conversation history) | Moderate (memory scoping) | Strong (state-based context) |
-| Feedback loops | Bounded (4-iter cap with relaxation) | Unbounded by default | Configurable per task | Explicit graph edges |
-| Review quality | Strong (tri-reviewer ensemble) | N/A (no built-in review) | N/A | N/A |
-| Cost model alignment | Purpose-built for Premium Requests | Token-optimized | Token-optimized | Token-optimized |
-| Human oversight | Two checkpoints (requirements, backlog) | Variable | Variable | Variable |
-
-### 7.3 Emerging Patterns Worth Watching
-
-**Reflection/Self-Critique Agents**
-Some frameworks (Reflexion, LATS) add a dedicated "reflection" step where an agent reviews its own output before handing off. Squadron partially achieves this through the Code Reviewer, but doesn't have agents that self-critique before submission. Adding a lightweight self-check step to the Backend Engineer ("verify your changes pass tests before reporting") is already present in the prompt, which is the pragmatic version of this pattern.
-
-**Memory and Learning Across Sessions**
-Current research is exploring agents that learn from past sessions — remembering which patterns worked, which review findings recur, and which types of tasks are most error-prone (MemGPT, Letta). Squadron does not implement cross-session memory. This could be valuable for identifying recurring code review findings or common test gaps, but adds significant complexity.
-
-**Dynamic Agent Spawning**
-Advanced systems dynamically create specialized agents based on task requirements (e.g., spawning a "Database Migration Agent" when a task involves schema changes). Squadron uses a fixed agent roster, which is simpler and more predictable. Dynamic spawning is powerful but introduces risks around unbounded complexity and unpredictable context windows.
-
-**Verification-Driven Development**
-An emerging alternative to TDD in agent systems is "verification-driven development" where a formal specification (types, invariants, contracts) is written first, and both tests and implementation are generated to satisfy the specification. This is more ambitious than TDD but could eliminate the "wrong test" problem where the Test Engineer writes an incorrect test that the Backend Engineer then implements against.
-
----
-
-## 8. Recommendations
+| # | Recommendation | Rationale | Evidence |
+|---|---|---|---|
+| 1 | **Re-install source agents/skills into `.github/`** | The installed artifacts are running a fundamentally different system — no milestones, wrong agent name, different branching model. Squadron is developing itself against stale agents. | See §3 for full diff analysis. 4 agent files and 3 skill files have content drift. |
 
 ### High Priority
 
-| # | Recommendation | Rationale |
-|---|---------------|-----------|
-| 1 | **Add error recovery guidance to Task Dispatcher** | No explicit handling for sub-agent catastrophic failures (crash, no output, build-breaking code). Add a "When a sub-agent fails" section covering: retry with simplified context, skip and report blocked, escalate to user. |
-| 2 | **Rename "Backend Engineer" to "Software Engineer"** | The current name implies backend-specific work, but the agent's prompt is technology-neutral. Users adopting Squadron for frontend, mobile, or full-stack projects may be confused by the naming. |
+| # | Recommendation | Rationale | Evidence |
+|---|---|---|---|
+| 2 | **Consolidate duplicated task template** | The Backlog Creator inlines a task template that is nearly identical to the `agent-backlog-maintenance` skill's template, but with minor inconsistencies (Implementation Notes comment, Dependencies format, Description guidance). This violates Principle 6 ("Never duplicate skill content inside agent definitions"). | See §4 Backlog Creator for field-by-field comparison. |
+| 3 | **Remove inlined task discovery from Task Dispatcher** | The Task Dispatcher's Step 1 duplicates `grep_search`/`file_search` patterns already defined in the `agent-backlog-maintenance` skill. Violates Principle 6. | Task Dispatcher Step 1 vs. skill's "Find the next task to work on" section contain identical patterns. |
+| 4 | **Fix `agent-backlog-maintenance` Implementation Notes comment** | The skill says `<!-- Populated by the Software Engineer after implementation -->` but documentation-only tasks are implemented by the Technical Writer. The comment is too specific. | Compare with Backlog Creator's more correct `<!-- Populated by the implementing agent -->`. |
 
 ### Medium Priority
 
-| # | Recommendation | Rationale |
-|---|---------------|-----------|
-| 3 | **Add task sizing guidance to Backlog Creator** | No heuristic for how large a task should be. Add guidance like "each task should be completable in a single agent session and typically affect 1–5 files." This prevents tasks that are too granular (overhead-heavy) or too large (risk of agent context overflow). |
-| 4 | **Clarify Test Engineer's dual mode** | The Test Engineer operates in TDD mode (tests before implementation) and post-implementation mode (tests after code exists), but doesn't explicitly acknowledge this difference. A brief note would help the agent adapt its approach (e.g., TDD tests can be more speculative; post-implementation tests should verify actual behavior). |
-| 5 | **Add a "Skill" for sub-agent failure handling patterns** | Extract error recovery into a reusable skill, since multiple orchestrator agents (Task Dispatcher, Code Reviewer, Refine Requirements) may need to handle sub-agent failures. |
+| # | Recommendation | Rationale | Evidence |
+|---|---|---|---|
+| 5 | **Create `CHANGELOG.md` or make it conditional** | The Technical Writer says `CHANGELOG.md: always — every completed task gets a changelog entry`. No `CHANGELOG.md` exists in the project. The "always" directive creates a confusing instruction. | `file_search` for `CHANGELOG*` returns no results. Completed tasks 001–005 have no changelog entries. |
+| 6 | **Add error recovery guidance to Task Dispatcher** | No explicit handling for sub-agent catastrophic failures. | No "error recovery" or "what to do when" section exists in the agent definition. |
+| 7 | **Clarify Test Engineer's dual mode** | The agent operates in TDD mode and post-implementation mode but doesn't acknowledge the difference. | Engineering workflow says "before any implementation exists"; test workflow says "existing implementation that needs test coverage" — the agent itself doesn't distinguish these. |
+| 8 | **Add task sizing guidance to Backlog Creator** | No heuristic for task size beyond milestone sizing (3–8 tasks). Individual task granularity is undefined. | No mention of file count limits, complexity bounds, or "single session" sizing in the agent definition. |
 
 ### Low Priority
 
-| # | Recommendation | Rationale |
-|---|---------------|-----------|
-| 6 | **Consider cross-session memory for recurring review findings** | If certain review findings repeat across tasks (e.g., "missing error handling in API calls"), recording them could help the Backend Engineer avoid them proactively. This is a non-trivial feature and is not needed for the current project scope. |
-| 7 | **Document agent extensibility in README** | Users adopting Squadron may want to add domain-specific agents (Frontend Engineer, Database Engineer, Security Reviewer). A brief section on how to create new agents following the existing patterns would improve adoption. |
-| 8 | **Add integration test guidance to Test Engineer** | The current prompt biases toward unit tests. A note about when integration tests are appropriate (cross-module behavior, CLI end-to-end, file system operations) would round out the testing strategy. |
+| # | Recommendation | Rationale | Evidence |
+|---|---|---|---|
+| 9 | **Consider adding `execute` to Technical Writer** | The writer cannot run verification commands despite having a "Verify" workflow step. | `tools: [read, edit, search]` — no `execute`. Step 5 says "Ensure code examples are syntactically correct." |
+| 10 | **Document agent extensibility in README** | Users adopting Squadron may want to add domain-specific agents. | No "extending" or "customization" section in README.md. |
+| 11 | **Add integration test guidance to Test Engineer** | The prompt biases toward unit tests. | "Prefer small focused unit tests; use integration tests only for cross-component behavior" — no guidance on *when* integration tests are actually needed. |
 
 ### No Action Needed
 
 | Item | Reason |
 |------|--------|
-| Three sub-reviewers | Ensemble approach is validated by research; removing one would degrade review quality |
-| Four workflow skills | Context efficiency justifies the file count; collapsing would increase context pollution |
-| Separate Requirement Conflict Resolver | Follows "one job per agent" principle; folding into Refine Requirements would bloat its context |
-| Separate Acceptance Tester | Distinct from Test Engineer; checks criteria that may not be automatable |
-| Security Reviewer agent | Reasonable Reviewer covers security adequately for this project's risk profile |
-| Frontend Engineer agent | Project has no frontend; name change to "Software Engineer" addresses the generality concern |
+| Three sub-reviewers | Ensemble approach requires three data points for triangulation |
+| Four workflow skills | Context efficiency justifies file count; follows Principle 8 |
+| Separate Requirement Conflict Resolver | Follows Principle 3; folding into Refine Requirements would bloat context |
+| Separate Acceptance Tester | Distinct from Test Engineer; checks non-automatable criteria |
+| Security Reviewer agent | Reasonable Reviewer covers security adequately for this project |
+| Backend Engineer rename | ✅ Already completed in tasks 002–005 |
 
 ---
 
-## 9. Summary Matrix
+## 11. Summary Matrix
 
 | Component | Verdict | Action |
 |-----------|---------|--------|
+| **Installed `.github/` artifacts** | ⛔ Stale | **Re-install from source** |
 | Refine Requirements | ✅ Keep as-is | — |
 | Requirement Conflict Resolver | ✅ Keep as-is | — |
-| Backlog Creator | ✅ Keep, minor enhancement | Add task sizing guidance |
-| Task Dispatcher | ✅ Keep, minor enhancement | Add error recovery section |
+| Backlog Creator | ⚠️ Minor fix | Deduplicate task template, reference skill |
+| Task Dispatcher | ⚠️ Minor fix | Remove inlined discovery patterns, add error recovery |
 | Test Engineer | ✅ Keep, minor enhancement | Clarify dual-mode usage |
-| Backend Engineer | ✅ Keep, rename | → "Software Engineer" |
+| Software Engineer | ✅ Keep as-is | — |
 | Code Reviewer | ✅ Keep as-is | — |
 | Strict Reviewer | ✅ Keep as-is | — |
 | Reasonable Reviewer | ✅ Keep as-is | — |
 | Lenient Reviewer | ✅ Keep as-is | — |
 | Acceptance Tester | ✅ Keep as-is | — |
-| Technical Writer | ✅ Keep as-is | — |
-| agent-backlog-maintenance | ✅ Keep as-is | — |
+| Technical Writer | ⚠️ Minor fix | CHANGELOG directive, consider `execute` tool |
+| agent-backlog-maintenance | ⚠️ Minor fix | Fix Implementation Notes comment |
 | commit-to-git | ✅ Keep as-is | — |
 | review-findings | ✅ Keep as-is | — |
 | task-delegation-task-identification | ✅ Keep as-is | — |
@@ -490,4 +565,4 @@ An emerging alternative to TDD in agent systems is "verification-driven developm
 | task-delegation-engineering-workflow | ✅ Keep as-is | — |
 | task-delegation-test-workflow | ✅ Keep as-is | — |
 
-**Overall Assessment**: The agent and skill set is well-designed, well-scoped, and aligned with current multi-agent research best practices. No agents or skills should be removed. Two high-priority enhancements (error recovery guidance, Backend Engineer rename) and three medium-priority improvements are recommended. The system's strongest features — the tri-reviewer ensemble, bounded iteration with progressive relaxation, TDD-first ordering, and skill-based context loading — are all validated by recent research.
+**Overall Assessment**: The source agent and skill definitions are well-designed, well-scoped, and internally consistent after the Software Engineer rename. The most critical issue is that the installed `.github/` artifacts have not been updated to match the source — they lack milestone support, use the old agent name, and follow a different branching model. Re-installation is the single highest-priority action. Beyond that, there are four substantive improvements: deduplicating the task template (Principle 6 violation), removing inlined discovery patterns (Principle 6 violation), fixing the Implementation Notes comment specificity, and resolving the CHANGELOG.md "always" directive that references a non-existent file.
