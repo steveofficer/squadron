@@ -17,11 +17,11 @@ This is a pure text replacement. No content other than the label "Backend Engine
 Do NOT modify `docs/AGENT_REVIEW.md` — it is a historical artifact that must be preserved as-is.
 
 ## Acceptance Criteria
-- [ ] Given `AGENTS.md`, when it is searched for "Backend Engineer", then zero matches are found
-- [ ] Given `README.md`, when it is searched for "Backend Engineer", then zero matches are found
-- [ ] Given `README.md`, when the mermaid diagram is read, then the node that previously represented "Backend Engineer" now shows "Software Engineer"
-- [ ] Given `docs/AGENT_REVIEW.md`, when it is checked, then its contents are unchanged (historical artifact preserved)
-- [ ] Given the tests from task 002, when `tests/002-rename-backend-engineer.test.js` is run after this change, then the AGENTS.md and README.md "no Backend Engineer" test cases pass
+- [x] Given `AGENTS.md`, when it is searched for "Backend Engineer", then zero matches are found
+- [x] Given `README.md`, when it is searched for "Backend Engineer", then zero matches are found
+- [x] Given `README.md`, when the mermaid diagram is read, then the node that previously represented "Backend Engineer" now shows "Software Engineer"
+- [x] Given `docs/AGENT_REVIEW.md`, when it is checked, then its contents are unchanged (historical artifact preserved)
+- [x] Given the tests from task 002, when `tests/002-rename-backend-engineer.test.js` is run after this change, then the AGENTS.md and README.md "no Backend Engineer" test cases pass
 
 ## Dependencies
 003

@@ -19,12 +19,12 @@ This is a pure text replacement. No logic, workflow, or behavioral changes are p
 Do NOT modify anything under `.github/agents/` or `.github/skills/` — those are human-managed installed copies.
 
 ## Acceptance Criteria
-- [ ] Given `agents/task-dispatcher.agent.md`, when it is searched for "Backend Engineer", then zero matches are found
-- [ ] Given `skills/task-delegation-engineering-workflow/SKILL.md`, when it is searched for "Backend Engineer", then zero matches are found
-- [ ] Given `skills/agent-backlog-maintenance/SKILL.md`, when it is searched for "Backend Engineer", then zero matches are found
-- [ ] Given `skills/task-delegation-task-identification/SKILL.md`, when it is searched for "Backend Engineer", then zero matches are found
-- [ ] Given `agents/task-dispatcher.agent.md`, when its `agents:` YAML list is read, then "Software Engineer" appears where "Backend Engineer" previously appeared
-- [ ] Given the tests from task 002, when `tests/002-rename-backend-engineer.test.js` is run after this change, then the agents/ and skills/ "no Backend Engineer" test cases pass
+- [x] Given `agents/task-dispatcher.agent.md`, when it is searched for "Backend Engineer", then zero matches are found
+- [x] Given `skills/task-delegation-engineering-workflow/SKILL.md`, when it is searched for "Backend Engineer", then zero matches are found
+- [x] Given `skills/agent-backlog-maintenance/SKILL.md`, when it is searched for "Backend Engineer", then zero matches are found
+- [x] Given `skills/task-delegation-task-identification/SKILL.md`, when it is searched for "Backend Engineer", then zero matches are found
+- [x] Given `agents/task-dispatcher.agent.md`, when its `agents:` YAML list is read, then "Software Engineer" appears where "Backend Engineer" previously appeared
+- [x] Given the tests from task 002, when `tests/002-rename-backend-engineer.test.js` is run after this change, then the agents/ and skills/ "no Backend Engineer" test cases pass
 
 ## Dependencies
 003
