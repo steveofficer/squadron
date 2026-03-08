@@ -41,13 +41,13 @@ Before delegating to any agents, analyze the task description and acceptance cri
    - Task involves creating or modifying functional code
    - Acceptance criteria describe new behavior or fixes
    - Requires tests, implementation, and review
-   - **Required agents**: Test Engineer → Backend Engineer → Code Reviewer → Acceptance Tester → Technical Writer
+   - **Required agents**: Test Engineer → Software Engineer → Code Reviewer → Acceptance Tester → Technical Writer
    - **Skill to follow**: `task-delegation-engineering-workflow`
 
 5. **Documentation + Code tasks** — require implementation and documentation
    - Task involves both code changes and documentation updates
    - Acceptance criteria cover both implementation and documentation
-   - **Required agents**: Test Engineer → Backend Engineer → Code Reviewer → Acceptance Tester → Technical Writer
+   - **Required agents**: Test Engineer → Software Engineer → Code Reviewer → Acceptance Tester → Technical Writer
    - **Skill to follow**: `task-delegation-engineering-workflow`
 
 ## Selecting the Workflow
@@ -73,12 +73,12 @@ Based on the task type, load the appropriate workflow skill and follow its steps
 
 - **Task: "Implement token refresh functionality"**
   - Type: Implementation
-  - Workflow: Test Engineer → Backend Engineer → Code Reviewer → Acceptance Tester → Technical Writer
+  - Workflow: Test Engineer → Software Engineer → Code Reviewer → Acceptance Tester → Technical Writer
   - Rationale: New feature requiring tests, implementation, review, and documentation
 
 - **Task: "Fix bug in password reset that allows expired tokens"**
   - Type: Implementation
-  - Workflow: Test Engineer → Backend Engineer → Code Reviewer → Acceptance Tester → Technical Writer
+  - Workflow: Test Engineer → Software Engineer → Code Reviewer → Acceptance Tester → Technical Writer
   - Rationale: Bug fix requires failing test first, then implementation to fix it
 
 - **Task: "Add API documentation and update README for new endpoints"**

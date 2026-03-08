@@ -46,7 +46,7 @@ to reference the original specification.>
 <Comma-separated task IDs (e.g., "001, 002"), or "None">
 
 ## Implementation Notes
-<!-- Populated by the Backend Engineer after implementation -->
+<!-- Populated by the Software Engineer after implementation -->
 
 ## Testing Findings
 <!-- Populated by the Acceptance Tester after verification -->
