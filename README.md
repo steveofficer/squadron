@@ -21,6 +21,20 @@ GitHub Copilot works differently. Copilot bills by **Premium Request** - each ti
 
 If you are using GitHub Copilot and paying per Premium Request, Squadron is built for you. If you are on a token-billed platform, other frameworks may serve you better.
 
+## Install as a Copilot Plugin
+
+1. Register the marketplace
+```bash
+copilot plugin marketplace add https://github.com/steveofficer/squadron
+```
+
+2. Install the plugin from the marketplace
+```bash
+copilot plugin install squadron@squadron-plugins
+```
+
+3. Invoke the **Refine Requirements** agent with your specification to begin
+
 ## Getting Started
 
 1. Open your project in VS Code with GitHub Copilot enabled
