@@ -24,9 +24,9 @@ function collectFiles(dir) {
   return files;
 }
 
-// AC1: No occurrences of "Backend Engineer" exist in agents/ source directory
-test('agents/ source directory contains no occurrences of "Backend Engineer"', () => {
-  const agentsDir = join(projectRoot, 'agents');
+// AC1: No occurrences of "Backend Engineer" exist in plugins/squadron/agents/ source directory
+test('plugins/squadron/agents/ source directory contains no occurrences of "Backend Engineer"', () => {
+  const agentsDir = join(projectRoot, 'plugins', 'squadron', 'agents');
   const files = collectFiles(agentsDir);
   const matches = [];
   for (const file of files) {
@@ -38,13 +38,13 @@ test('agents/ source directory contains no occurrences of "Backend Engineer"', (
   assert.deepEqual(
     matches,
     [],
-    `"Backend Engineer" found in agents/ source files: ${matches.join(', ')}`,
+    `"Backend Engineer" found in plugins/squadron/agents/ source files: ${matches.join(', ')}`,
   );
 });
 
-// AC2: No occurrences of "Backend Engineer" exist in skills/ source directory
-test('skills/ source directory contains no occurrences of "Backend Engineer"', () => {
-  const skillsDir = join(projectRoot, 'skills');
+// AC2: No occurrences of "Backend Engineer" exist in plugins/squadron/skills/ source directory
+test('plugins/squadron/skills/ source directory contains no occurrences of "Backend Engineer"', () => {
+  const skillsDir = join(projectRoot, 'plugins', 'squadron', 'skills');
   const files = collectFiles(skillsDir);
   const matches = [];
   for (const file of files) {
@@ -56,7 +56,7 @@ test('skills/ source directory contains no occurrences of "Backend Engineer"', (
   assert.deepEqual(
     matches,
     [],
-    `"Backend Engineer" found in skills/ source files: ${matches.join(', ')}`,
+    `"Backend Engineer" found in plugins/squadron/skills/ source files: ${matches.join(', ')}`,
   );
 });
 
@@ -74,22 +74,22 @@ test('AGENTS.md and README.md contain no occurrences of "Backend Engineer"', () 
   );
 });
 
-// AC4: agents/software-engineer.agent.md exists and its name: frontmatter field equals "Software Engineer"
-test('agents/software-engineer.agent.md exists with frontmatter name: "Software Engineer"', () => {
-  const filePath = join(projectRoot, 'agents', 'software-engineer.agent.md');
-  assert.ok(existsSync(filePath), 'agents/software-engineer.agent.md must exist');
+// AC4: plugins/squadron/agents/software-engineer.agent.md exists and its name: frontmatter field equals "Software Engineer"
+test('plugins/squadron/agents/software-engineer.agent.md exists with frontmatter name: "Software Engineer"', () => {
+  const filePath = join(projectRoot, 'plugins', 'squadron', 'agents', 'software-engineer.agent.md');
+  assert.ok(existsSync(filePath), 'plugins/squadron/agents/software-engineer.agent.md must exist');
 
-  const oldFilePath = join(projectRoot, 'agents', 'backend-engineer.agent.md');
+  const oldFilePath = join(projectRoot, 'plugins', 'squadron', 'agents', 'backend-engineer.agent.md');
   assert.ok(
     !existsSync(oldFilePath),
-    'agents/backend-engineer.agent.md must not exist alongside the new software engineer agent file',
+    'plugins/squadron/agents/backend-engineer.agent.md must not exist alongside the new software engineer agent file',
   );
 
   const content = readFileSync(filePath, 'utf8');
 
   // Extract the YAML frontmatter block (between --- delimiters)
   const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
-  assert.ok(frontmatterMatch, 'agents/software-engineer.agent.md must have YAML frontmatter');
+  assert.ok(frontmatterMatch, 'plugins/squadron/agents/software-engineer.agent.md must have YAML frontmatter');
 
   const frontmatter = frontmatterMatch[1];
   assert.match(

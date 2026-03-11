@@ -89,11 +89,11 @@ The first review (Revision 1) was conducted against the pre-rename codebase. Sin
 
 **Severity: HIGH — This is the most important finding in this review.**
 
-The `.github/` installed artifacts (which Squadron uses to develop itself) have drifted significantly from the `/agents/` and `/skills/` source files. Per AGENTS.md, "A human updates these installed copies when they decide it is time." The current drift is so substantial that the installed agents are effectively running a **different system** from what the source defines.
+The `.github/` installed artifacts (which Squadron uses to develop itself) have drifted significantly from the `/plugins/squadron/agents/` and `/plugins/squadron/skills/` source files. Per AGENTS.md, "A human updates these installed copies when they decide it is time." The current drift is so substantial that the installed agents are effectively running a **different system** from what the source defines.
 
 ### 3.1 File-Level Drift
 
-| Component | Source (`agents/` or `skills/`) | Installed (`.github/`) | Drift |
+| Component | Source (`plugins/squadron/`) | Installed (`.github/`) | Drift |
 |---|---|---|---|
 | Implementation agent | `software-engineer.agent.md` | `backend-engineer.agent.md` | **Wrong filename and name** |
 | Task Dispatcher `agents:` field | `["Software Engineer", ...]` | `["Backend Engineer", ...]` | **References wrong agent name** |

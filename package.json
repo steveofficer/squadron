@@ -14,8 +14,7 @@
   },
   "files": [
     "cli.js",
-    "agents",
-    "skills"
+    "plugins"
   ],
   "dependencies": {
     "@clack/prompts": "^0.9.1",

@@ -112,15 +112,15 @@ test('"Meet the Agents" has a ### Requirement Conflict Resolver subsection in th
   assert.match(rcrBody, /unresolvable/i, 'RCR section must describe the "unresolvable" outcome');
 });
 
-// AC4: Total agent count in README matches the 12 files present in /agents/.
-test('all 12 agents in /agents/ are represented by ### subsections in "Meet the Agents"', () => {
-  const agentsDir = join(projectRoot, 'agents');
+// AC4: Total agent count in README matches the 12 files present in /plugins/squadron/agents/.
+test('all 12 agents in /plugins/squadron/agents/ are represented by ### subsections in "Meet the Agents"', () => {
+  const agentsDir = join(projectRoot, 'plugins', 'squadron', 'agents');
   const agentFiles = readdirSync(agentsDir).filter((f) => f.endsWith('.agent.md'));
 
   assert.strictEqual(
     agentFiles.length,
     12,
-    `Expected exactly 12 .agent.md files in /agents/, found ${agentFiles.length}`,
+    `Expected exactly 12 .agent.md files in /plugins/squadron/agents/, found ${agentFiles.length}`,
   );
 
   // Derive heading text from filename: "foo-bar-baz.agent.md" → "Foo Bar Baz"

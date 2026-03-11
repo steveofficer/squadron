@@ -12,7 +12,7 @@ This repository is both the **source code** for the Squadron package and a **con
 
 These are the foundational rules of this project. They override any conflicting guidance and should rarely change.
 
-1. **Source is truth** — The canonical agent and skill definitions live in `/agents/` and `/skills/`. The copies under `.github/` are installed artifacts.
+1. **Source is truth** — The canonical agent and skill definitions live in `/plugins/squadron/agents/` and `/plugins/squadron/skills/`. The copies under `.github/` are installed artifacts.
 2. **Humans gate installation** — Only a human decides when to copy source agents into `.github/`. Agents must never modify anything under `.github/agents/` or `.github/skills/`.
 3. **One job per agent** — Each agent has a single, well-defined responsibility. Do not combine roles or expand an agent's scope beyond its stated purpose.
 4. **Autonomy within scope** — Agents complete their assigned work independently but must not modify code outside the boundaries of their current task.
@@ -25,11 +25,14 @@ These are the foundational rules of this project. They override any conflicting 
 
 ```
 squadron/
-├── agents/                # SOURCE — canonical agent definitions (modifiable)
-├── skills/                # SOURCE — canonical skill definitions (modifiable)
+├── plugins/
+│   └── squadron/
+│       ├── agents/        # SOURCE — canonical agent definitions (modifiable)
+│       └── skills/        # SOURCE — canonical skill definitions (modifiable)
 ├── .github/
 │   ├── agents/            # INSTALLED — do NOT modify (human-managed)
-│   └── skills/            # INSTALLED — do NOT modify (human-managed)
+│   ├── skills/            # INSTALLED — do NOT modify (human-managed)
+│   └── plugin/            # Plugin marketplace metadata
 ├── cli.js                 # CLI installer
 ├── package.json           # Package manifest
 ├── README.md              # Project documentation
@@ -38,14 +41,14 @@ squadron/
 
 ### Source vs Installed
 
-The `/agents/` and `/skills/` directories are the **source of truth**. The `cli.js` installer copies them into a target project's `.github/` directory. The `.github/agents/` and `.github/skills/` in *this* repository exist because Squadron was bootstrapped using its own agents. A human updates these installed copies when they decide it is time — agents must never touch them.
+The `/plugins/squadron/agents/` and `/plugins/squadron/skills/` directories are the **source of truth**. The `cli.js` installer copies them into a target project's `.github/` directory. The `.github/agents/` and `.github/skills/` in *this* repository exist because Squadron was bootstrapped using its own agents. A human updates these installed copies when they decide it is time — agents must never touch them.
 
 ## Modification Boundaries
 
 ### Agents MAY modify
 
-- `/agents/*.agent.md` — source agent definitions
-- `/skills/*/SKILL.md` — source skill definitions
+- `/plugins/squadron/agents/*.agent.md` — source agent definitions
+- `/plugins/squadron/skills/*/SKILL.md` — source skill definitions
 - `cli.js` — the CLI installer
 - `package.json` — package metadata and dependencies
 - `README.md` — project documentation
@@ -74,16 +77,16 @@ When in doubt: if a file is under `.github/`, do not modify it.
 
 ## Agent & Skill Development
 
-When creating or modifying agent definitions in `/agents/`:
+When creating or modifying agent definitions in `/plugins/squadron/agents/`:
 
 - Include YAML frontmatter with: `name`, `description`, `model`, `tools`, `user-invokable`
 - Agents that delegate must include an `agents` field listing their delegates
 - Define clearly: Role, Workflow (step-by-step), and Quality Standards
 - Keep scope narrow — if a workflow grows beyond the agent's core responsibility, split it into multiple agents
 
-When creating or modifying skill definitions in `/skills/`:
+When creating or modifying skill definitions in `/plugins/squadron/skills/`:
 
-- Each skill lives in its own directory under `/skills/`
+- Each skill lives in its own directory under `/plugins/squadron/skills/`
 - The file must be named `SKILL.md` with YAML frontmatter containing `name` and `description`
 - Skills define **procedures and formats**, not roles — they are shared knowledge consumed by multiple agents
 

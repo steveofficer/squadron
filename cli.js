@@ -150,8 +150,8 @@ async function main() {
   const s = spinner();
   s.start('Installing Squadron agents and skills');
 
-  const agentsSrc = path.join(__dirname, 'agents');
-  const skillsSrc = path.join(__dirname, 'skills');
+  const agentsSrc = path.join(__dirname, 'plugins', 'squadron', 'agents');
+  const skillsSrc = path.join(__dirname, 'plugins', 'squadron', 'skills');
 
   try {
     copyDirRecursive(agentsSrc, agentsDest);

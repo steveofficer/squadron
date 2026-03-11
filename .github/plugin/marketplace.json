@@ -1,0 +1,25 @@
+{
+  "name": "squadron-plugins",
+  "metadata": {
+    "description": "Squadron plugins for GitHub Copilot.",
+    "version": "1.0.0"
+  },
+  "owner": {
+    "name": "Steve Officer",
+    "email": "steve.officer@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "squadron",
+      "source": "./plugins/squadron",
+      "description": "Squadron plugin for GitHub Copilot.",
+      "version": "1.0.0",
+      "skills": [
+        "./skills"
+      ],
+      "agents": [
+        "./agents"
+      ]
+    }
+  ]
+}
