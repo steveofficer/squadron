@@ -9,25 +9,33 @@ on:
 permissions:
   contents: read
   issues: read
-  pull-requests: read
 
-# Tools - GitHub API access via toolsets (context, repos, issues, pull_requests)
-# tools:
-#   github:
-#     toolsets: [default]
+mcp-servers:
+  tavily:
+    command: npx
+    args: ["-y", "@tavily/mcp-server"]
+    env:
+      TAVILY_API_KEY: "${{ secrets.TAVILY_API_KEY }}"
+    allowed: ["search", "search_news"]
 
 # Network access
-network: defaults
+network:
+  allowed:
+    - defaults
+    - "*.tavily.com"
 
 # Outputs - what APIs and tools can the AI use?
 safe-outputs:
   create-issue:          # Creates issues (default max: 1)
     max: 1               # Optional: specify maximum number
+    title-prefix: "[research] "
+    labels: [research, improvements]
+    close-older-issues: true
 ---
 
 # research_workflow
 
-The agent performs deep research on the topic of Multi Agent Code Generator Architectures and summarises key findings that can be applied to Squadron in order to improve its quality and maintain its relevance as a tool.
+The agent performs deep research on the topic of Multi Agent Code Generator Architectures and summarises key findings that can be applied to Squadron in order to improve its quality and maintain its relevance.
 
 ## Instructions
 
