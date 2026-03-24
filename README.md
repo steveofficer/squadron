@@ -177,3 +177,8 @@ Defines the standard report format for all reviewer agents. Specifies severity p
 - **Human oversight**: humans review requirements and the backlog before implementation begins
 - **Context efficiency**: sub-agents receive only the context they need, keeping context windows small
 - **Cost optimization**: work is delegated to specialized sub-agents via the `agent` tool, minimizing token usage per Premium Request
+
+## References
+
+- **AgentCoder: Multi-Agent-Based Code Generation with Iterative Testing and Optimisation** — Huang et al. (2023). arXiv:2312.13010. Introduces a multi-agent system (Programmer, Test Designer, Test Executor) with an iterative test-feedback loop showing strong gains on HumanEval/MBPP.
+- **Reflexion: Language Agents with Verbal Reinforcement Learning** — Shinn et al. (2023). NeurIPS 2023. arXiv:2303.11366. Agents reflect on failure signals via natural language and update a memory buffer; significant improvements across coding and decision-making tasks.

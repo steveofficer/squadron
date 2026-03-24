@@ -122,6 +122,7 @@ Agents must follow these skills for their respective concerns — do not improvi
 | Code review task workflow | `task-delegation-ci-cd-workflow` | Task Dispatcher |
 | Test-only task workflow | `task-delegation-test-workflow` | Task Dispatcher |
 | Implementation task workflow | `task-delegation-engineering-workflow` | Task Dispatcher |
+| Debug-retry loop for implementation tasks | `debug-retry-loop` | Task Dispatcher (via engineering workflow) |
 
 ## Quality Standards
 
