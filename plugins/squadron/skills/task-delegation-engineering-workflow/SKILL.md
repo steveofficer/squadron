@@ -26,7 +26,14 @@ Invoke the **Software Engineer** agent with a focused prompt containing:
 - The instruction to implement only what is needed to make the pre-written TDD tests pass
 - On rework iterations: the Code Reviewer's rework instructions and/or the Acceptance Tester's failure findings
 
-## Step 3: Code Review
+## Step 3: Debug-Retry Loop
+
+Load and follow the `debug-retry-loop` skill.
+
+- **If the debug-retry loop completes successfully** (tests passing): proceed to Step 4 (Code Review)
+- **If the debug-retry loop results in the task being blocked** (tests still failing after maximum retries): skip Step 4 (Code Review) and Step 7 (Document) and proceed directly to task blocking per the `agent-backlog-maintenance` skill conventions
+
+## Step 4: Code Review
 
 Invoke the **Code Reviewer** agent with:
 - The task description and acceptance criteria
@@ -35,7 +42,7 @@ Invoke the **Code Reviewer** agent with:
 - The project's coding conventions and style context
 - The current iteration number (1–4)
 
-## Step 4: Verify
+## Step 5: Verify
 
 Invoke the **Acceptance Tester** agent with:
 - The task description and acceptance criteria
@@ -43,16 +50,16 @@ Invoke the **Acceptance Tester** agent with:
 - The backlog file path for recording findings
 - The instruction that the TDD tests written in Step 1 serve as executable evidence — each passing test is direct proof that the corresponding acceptance criterion has been met
 
-## Step 5: Handle Results
+## Step 6: Handle Results
 
-- **If Code Review verdict is PASS and all acceptance criteria PASS**: proceed to Step 6 (Document)
+- **If Code Review verdict is PASS and all acceptance criteria PASS**: proceed to Step 7 (Document)
 - **If Code Review verdict is REWORK NEEDED or any acceptance criterion FAILS**:
   - Collect the Code Reviewer's rework instructions and the Acceptance Tester's failure findings
   - Increment the iteration counter
-  - If iteration count exceeds 4: accept the code as-is, proceed to Step 6. Record any outstanding findings in the backlog but do not block completion — the code is as good as it will get.
+  - If iteration count exceeds 4: accept the code as-is, proceed to Step 7. Record any outstanding findings in the backlog but do not block completion — the code is as good as it will get.
   - Otherwise: return to Step 2 with the combined feedback from the Code Review and Acceptance Test, instructing the Software Engineer to address the specific issues (do not rewrite the TDD tests unless the acceptance criteria themselves have changed)
 
-## Step 6: Document
+## Step 7: Document
 
 Invoke the **Technical Writer** agent with:
 - The completed task description and summary of all changes
