@@ -65,12 +65,14 @@ Once you have followed a link from a research article you cannot go any deeper.
  Each action must have:
   - A title that provides an at a glance summary of the action to be done
   - A summary of the action as well as the evidence that supports the relevance of the action. This summary must be no more than 250 words 
+  - A prompt that can be given to Squadron to self-improve. The prompt must contain sufficient detail and context on what the concrete improvement is. The word limit for the prompt is 600 words.
 
 You can have no more than 5 actions recommended.
 When rating multiple actions use the following criteria to rank them:
  - Reputability: More reputable sources of information like arxiv rank higher than personal blog posts
  - Relevance: Topics highly relevant to Agent Coding Teams rank higher than general LLM research
  - Timeliness: More recent research is more relevant than older research
+ - Popularity: More widely discussed and accepted sources rank higher than more niche content. However, being unpopular doesn't automatically mean bad. We might be ahead of the crowd.
 
  ### Citation
  At the bottom of the issue cite each of the references used in the generation of the report.
