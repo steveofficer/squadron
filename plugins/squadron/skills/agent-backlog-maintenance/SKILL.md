@@ -101,6 +101,16 @@ Lists only outstanding tasks (pending, in-progress, blocked). Completed tasks MU
 |----|-------|-------------|-------|
 | M1 | <Milestone title> | <Brief description of deliverable business value> | 001, 002 |
 
+## Parallel Tracks
+
+Tasks with no mutual dependencies that can execute concurrently (max 3 per batch):
+
+| After | Parallel Tasks | Milestone |
+|-------|---------------|----------|
+| 001 complete | 002, 003 | M1 |
+
+If no tasks can run in parallel, omit this section.
+
 ## Tasks
 
 | # | Task | Milestone | Priority | Status | Dependencies |
@@ -172,9 +182,17 @@ Use `grep_search` with pattern `^M<N>$` (e.g., `^M1$`) and `includePattern` set 
 
 Read `backlog/active/README.md` and check the Milestones table. A milestone is complete when none of its task IDs appear in active task files. Use `file_search` with `backlog/completed/NNN-*` for each task ID to verify.
 
+## Find parallel-eligible tasks in a milestone
+
+1. Use "Find the next task to work on" to identify all pending tasks in the milestone with fully satisfied dependencies
+2. Among these eligible tasks, identify tasks with no mutual dependencies — they can execute in parallel
+3. Consult the `## Parallel Tracks` table in `backlog/active/README.md` as a guide, but always verify dependencies are actually satisfied before including a task in a batch
+4. Select up to 3 eligible, mutually independent tasks as a parallel batch
+5. Prefer tasks that do not modify the same files to avoid merge conflicts (check task descriptions for overlapping file paths)
+
 # Milestones
 
-A **milestone** is a group of sequential tasks that, when completed together, deliver measurable business value and form a reviewable unit of work. Each milestone represents a deliverable chunk — a point where an implementation session ends, a PR is created, and the work can be deployed to production.
+A **milestone** is a group of tasks that, when completed together, deliver measurable business value and form a reviewable unit of work. Each milestone represents a deliverable chunk — a point where an implementation session ends, a PR is created, and the work can be deployed to production. Tasks within a milestone may execute sequentially or in parallel depending on their dependency relationships.
 
 ## Milestone Design Criteria
 
@@ -252,7 +270,7 @@ When creating a new backlog from a specification:
 
 1. Create `backlog/`, `backlog/active/`, and `backlog/completed/` directories
 2. Create all task files in `backlog/active/` with status `pending`, each assigned to a milestone
-3. Create `backlog/active/README.md` with the Milestones table and all tasks listed
+3. Create `backlog/active/README.md` with the Milestones table, Parallel Tracks table (if applicable), and all tasks listed
 4. Create `backlog/completed/README.md` with empty tables:
 
 ```markdown
@@ -274,6 +292,9 @@ When creating a new backlog from a specification:
 # Rules
 
 - Only one agent works on a task at a time
+- Up to 3 tasks with satisfied dependencies and no mutual dependencies may execute in parallel within a milestone
+- Parallel tasks must not modify the same files to avoid merge conflicts
+- Each parallel task is committed independently as it completes — do not wait for the entire batch
 - A task cannot move to `in-progress` until all its dependencies are `completed` (verified by checking for the dependency file in `backlog/completed/`)
 - A task cannot move to `completed` until the Acceptance Tester reports all criteria as PASS
 - Blocked tasks must include the unresolved findings in the Testing Findings section

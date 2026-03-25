@@ -34,6 +34,8 @@ You will receive a refined specification that has already been analyzed and clar
   - Be completable in one implementation session by one agent
   - Be independently verifiable against its acceptance criteria
 - Order tasks by dependency — prerequisite tasks come first
+- Minimize unnecessary sequential dependencies — if two tasks operate on separate modules or files with no shared state, they should NOT depend on each other even if they were conceptualized together
+- Prefer wide dependency graphs over deep chains — independent tasks that can start simultaneously enable faster execution through parallel processing
 - Assign priority:
   - **high**: blocks other tasks or is critical path
   - **medium**: important but not blocking
@@ -59,7 +61,24 @@ After decomposing into tasks, group them into **deliverable milestones**. A mile
 - If a milestone has only 1 task, consider whether it can be merged into an adjacent milestone
 - Err on the side of smaller, more frequent milestones — faster feedback is preferred over larger batches
 
-## 4. Define Acceptance Criteria
+## 4. Identify Parallel Execution Opportunities
+
+Review the dependency graph within each milestone and identify tasks that can execute simultaneously:
+
+1. Build the dependency graph for each milestone's tasks
+2. Identify sets of tasks with no mutual dependencies that become eligible at the same point in the execution timeline (i.e., their prerequisites complete at the same stage)
+3. Group these into **parallel tracks** — sets of 2–3 tasks that can run concurrently
+4. Document parallel tracks in the active index's `## Parallel Tracks` table
+
+### Guidelines
+
+- Do not force parallelism where genuine dependencies exist — correctness always trumps speed
+- The maximum parallel batch size is 3 tasks — do not plan for more than 3 concurrent tasks at any execution point
+- Consider file-level contention: tasks modifying the same files should not be marked as parallelizable even if they have no logical dependency
+- A milestone with all-sequential tasks is acceptable when the work is inherently dependent
+- Tasks that create foundational infrastructure (models, schemas, base classes) are typically sequential; tasks that build features on top of shared infrastructure are often parallelizable
+
+## 5. Define Acceptance Criteria
 
 - Write 2–5 specific, verifiable acceptance criteria per task
 - Each criterion must be testable by automated tests or directly observable behavior
@@ -67,7 +86,7 @@ After decomposing into tasks, group them into **deliverable milestones**. A mile
 - Cover the happy path and the most critical edge cases
 - Avoid vague criteria — "works correctly" is not verifiable
 
-## 5. Create Backlog Files
+## 6. Create Backlog Files
 
 - Create the `backlog/`, `backlog/active/`, and `backlog/completed/` directories if they do not exist
 - Create one markdown file per task in `backlog/active/` using the naming convention: `NNN-kebab-case-title.md`
@@ -104,7 +123,7 @@ pending
 <!-- Populated by the acceptance tester -->
 ```
 
-## 6. Create Backlog Indexes
+## 7. Create Backlog Indexes
 
 Create three index files following the `agent-backlog-maintenance` skill:
 
@@ -119,6 +138,14 @@ Create three index files following the `agent-backlog-maintenance` skill:
 |----|-------|-------------|-------|
 | M1 | <Milestone title> | <Brief description of deliverable business value> | 001, 002 |
 | M2 | <Milestone title> | <Brief description of deliverable business value> | 003, 004, 005 |
+
+## Parallel Tracks
+
+Tasks with no mutual dependencies that can execute concurrently (max 3 per batch):
+
+| After | Parallel Tasks | Milestone |
+|-------|---------------|----------|
+| 001, 002 complete | 003, 004, 005 | M2 |
 
 ## Tasks
 
@@ -165,11 +192,12 @@ Create three index files following the `agent-backlog-maintenance` skill:
 - [Completed Tasks](completed/README.md)
 ```
 
-## 7. Report
+## 8. Report
 
 Provide a summary:
 - Total number of milestones created, with their titles and task counts
 - Total number of tasks created
+- Parallel execution opportunities identified (which tasks can run concurrently within each milestone)
 - Overview of the task breakdown and execution order
 - Any identified risks, complexities, or dependencies worth noting
 

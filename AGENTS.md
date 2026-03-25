@@ -96,16 +96,17 @@ Squadron follows a structured workflow. Agents must respect this sequence:
 
 1. **Refine Requirements** → clarify ambiguities, produce a refined spec
    - **Requirement Conflict Resolver** → invoked automatically when new requirements may conflict with existing code
-2. **Backlog Creator** → decompose the spec into tasks with acceptance criteria, grouped into deliverable milestones
+2. **Backlog Creator** → decompose the spec into tasks with acceptance criteria, grouped into deliverable milestones, with parallel execution opportunities identified
 3. **Task Dispatcher** → for each milestone (user may select specific milestones or all):
    - Create a milestone branch
-   - For each task in the milestone, orchestrate:
+   - Identify parallel batches of up to 3 independent tasks with no mutual dependencies
+   - For each parallel batch, execute tasks concurrently through their respective workflows:
      - **Test Engineer** → write tests first (TDD)
      - **Software Engineer** → implement to pass the tests
      - **Code Reviewer** → multi-perspective review (strict, reasonable, lenient)
      - **Acceptance Tester** → verify acceptance criteria are met
      - **Technical Writer** → update documentation
-   - **Commit** each task following the `commit-to-git` skill
+   - **Commit** each task independently as it completes, following the `commit-to-git` skill
    - Complete the milestone → signal PR readiness
 
 ### Skill References

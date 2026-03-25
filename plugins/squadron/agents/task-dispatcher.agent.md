@@ -47,34 +47,62 @@ Create a feature branch for this milestone following the `commit-to-git` skill b
 ```
 For example: `feat/M1-user-authentication` or `docs/M2-api-documentation`. Use the most representative type for the milestone's work. Check out this branch before processing any tasks.
 
-### Step 1: Assess Tasks in This Milestone
+### Step 1: Identify Parallel Batch
 
 1. Use `grep_search` with pattern `^pending$` and `includePattern` set to `backlog/active/*.md` to find pending tasks
 2. Filter to only tasks belonging to the current milestone (check the `## Milestone` field)
 3. For each task, verify its dependencies are completed by checking for the dependency file in `backlog/completed/` using `file_search`
-4. Select the next task based on:
-   - Dependency order (prerequisites first — all dependencies must exist in `backlog/completed/`)
-   - Priority (high → medium → low)
-5. Read the selected task file in full to get implementation details
+4. Collect all **eligible tasks** — those whose dependencies are fully satisfied
+5. From the eligible set, identify tasks with no mutual dependencies that can execute in parallel. Consult the `## Parallel Tracks` table in `backlog/active/README.md` as a guide, but always verify dependencies independently.
+6. Select a **parallel batch** of up to 3 eligible tasks with no mutual dependencies and no overlapping file modifications. Prioritize by: priority (high → medium → low), then task number (lowest first).
+7. Read all selected task files in full to get implementation details
+8. Classify each task's type following the `task-delegation-task-identification` skill
 
-### Step 2: Implement Task
+### Step 2: Execute Parallel Batch
 
-For each task in the milestone, execute the implementation cycle. Track the current iteration number starting at 1.
+Process all tasks in the batch through their respective agent workflows simultaneously using **round-based parallel execution**. Each task has its own workflow (determined in Step 1), its own iteration counter (starting at 1), and its own state.
 
-#### Step 2a: Analyze Task Requirements
+#### State Tracking
 
-Before delegating to any agents, analyze the task description and acceptance criteria to determine what kind of work is required and which agents are needed. Follow the `task-delegation-task-identification` skill to classify the task type and select the appropriate workflow skill for the steps below.
+Maintain a tracking table for each task in the batch:
 
-#### Step 2b: Execute Agent Workflow
+| Task | Type | Current Step | Iteration | Status |
+|------|------|-------------|-----------|--------|
+| 003 | implementation | Write Tests | 1 | active |
+| 004 | implementation | Write Tests | 1 | active |
+| 005 | docs-only | Document | 1 | active |
 
-Based on the task type determined in Step 2a, load and follow the appropriate workflow skill. Track the current iteration number starting at 1.
+Update this table after each round. Use the todo list to make batch progress visible to the user.
 
-- **Documentation-only tasks**: follow the `task-delegation-documentation-workflow` skill
-- **Code review tasks**: follow the `task-delegation-ci-cd-workflow` skill
-- **Test-only tasks**: follow the `task-delegation-test-workflow` skill
-- **Implementation tasks** and **Documentation + Code tasks**: follow the `task-delegation-engineering-workflow` skill
+#### Workflow Step Mapping
 
-#### Step 2c: Complete Task
+Based on the task type, load the appropriate delegation skill to determine the step sequence:
+
+- **Implementation tasks** and **Documentation + Code tasks** (`task-delegation-engineering-workflow`): Write Tests → Implement → Code Review → Verify → Handle Results → Document
+- **Documentation-only tasks** (`task-delegation-documentation-workflow`): Document → Verify → Handle Results
+- **Code review tasks** (`task-delegation-ci-cd-workflow`): Review → Verify → Handle Results
+- **Test-only tasks** (`task-delegation-test-workflow`): Write Tests → Code Review → Verify → Handle Results
+
+#### Execution Rounds
+
+Repeat until all tasks in the batch are complete or blocked:
+
+1. **Determine next action per task**: For each active task in the batch, determine which sub-agent to invoke based on its current workflow step
+2. **Invoke sub-agents in parallel**: Invoke all required sub-agents simultaneously — one per active task. For example, if Task A needs a Test Engineer and Task B needs a Technical Writer, invoke both in parallel.
+3. **Process results**: Evaluate each sub-agent's output:
+   - Advance the task to its next workflow step
+   - If rework is needed (review verdict is REWORK or acceptance criteria fail), increment the task's iteration counter and set its current step back to the appropriate rework entry point per the delegation skill
+   - If the task's iteration count exceeds 4, accept as-is and advance to completion
+4. **Complete finished tasks**: For any task that has completed all workflow steps, execute the task completion procedure (Step 2c below). Each task is committed independently as it completes — do not wait for other tasks in the batch.
+5. **Continue or exit**: If active tasks remain in the batch, return to step 1 of this loop. If all tasks are complete or blocked, return to Step 1 to pick up the next parallel batch for this milestone.
+
+#### Single-Task Batches
+
+When only 1 task is eligible, the execution rounds run with a single task, equivalent to the sequential workflow described in the task delegation skills.
+
+### Step 2c: Complete Task
+
+For each task that finishes its workflow (whether in a parallel batch or alone):
 
 - Update the task's backlog file:
   - Set status to `completed`
@@ -84,7 +112,6 @@ Based on the task type determined in Step 2a, load and follow the appropriate wo
 - Add the task row to `backlog/completed/README.md`
 - Update counts in `backlog/README.md` (decrement Active, increment Completed)
 - Commit all changes (code, tests, docs, backlog updates) following the `commit-to-git` skill conventions
-- Return to Step 1 to pick up the next task in this milestone
 
 ### Step 3: Complete Milestone
 
@@ -118,7 +145,8 @@ When invoking sub-agents, provide a focused, complete prompt that includes:
 
 # Quality Standards
 
-- Always analyze the task requirements first (Step 2a) to determine the appropriate agent workflow — never default to a one-size-fits-all approach
+- Execute eligible tasks in parallel batches (max 3) when they have no mutual dependencies — do not default to sequential execution when parallelism is available
+- Always classify each task's requirements first (Step 1) to determine the appropriate agent workflow — never default to a one-size-fits-all approach
 - Always include the Acceptance Tester in the workflow — every task must have its acceptance criteria verified
 - For implementation tasks: never skip the code review step — code changes must be reviewed
 - For test-only tasks: never skip the code review step — test code must be reviewed
@@ -126,10 +154,11 @@ When invoking sub-agents, provide a focused, complete prompt that includes:
 - For code review tasks: the Code Reviewer's findings serve as the implementation, verified by the Acceptance Tester
 - Never mark a task as completed without passing all acceptance criteria (unless the 4-iteration limit has been reached)
 - Limit implementation cycles to a maximum of 4 iterations per task — do not allow infinite rework loops
-- Commit after each completed task, not in bulk
+- Commit each task independently as it completes, not in bulk and not waiting for the batch to finish
 - Create one branch per milestone, not per task — all tasks in a milestone share a branch
 - When all tasks in a milestone are complete, update the milestone in the backlog indexes
 - Respect the user's milestone selection — only process the milestones they requested
 - Provide clear, informative delegation prompts to sub-agents
 - Respect dependency ordering — never implement a task before its dependencies are complete
+- Parallel tasks must not modify the same files — verify before batching
 - Track progress visibly using the todo list so the user can monitor status
