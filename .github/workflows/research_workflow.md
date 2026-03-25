@@ -13,17 +13,20 @@ permissions:
 mcp-servers:
   tavily:
     command: npx
-    args: ["-y", "@tavily/mcp-server"]
+    args: ["-y", "tavily-mcp@latest"]
     env:
       TAVILY_API_KEY: "${{ secrets.TAVILY_API_KEY }}"
-    allowed: ["search", "research"]
+    allowed: ["tavily_research", "tavily_extract"]
 
 # Network access
 network:
   allowed:
     - defaults
     - "*.tavily.com"
+    - "arxiv.org"
     - "*.arxiv.org"
+    - "github.blog"
+    - "*.github.blog"
 
 # Outputs - what APIs and tools can the AI use?
 safe-outputs:
@@ -45,7 +48,7 @@ The agent performs deep research on the topic of Multi Agent Code Generator Arch
 Read fixed sources of information:
  - https://github.blog/changelog/
 
-Use the Tavily `research` tool with the following prompt
+Use the Tavily `tavily_research` tool with the following prompt
 ```md
 Analyse the latest research in the areas of Multi Agent Code Generation Frameworks and LLM Agents Collaboration Evaluation.
 
@@ -56,6 +59,8 @@ The output must take the form of a top 10 list with each item containing:
  - A summary of no more than 800 words.
  - Citations.
 ```
+
+The `tavily_extract` tool can be used to access content for individual urls
 
  ### Analyse
  Summarise all of the latest information and distill it down into actionable insights that can be applied to this project.
