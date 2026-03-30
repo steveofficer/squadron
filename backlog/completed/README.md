@@ -10,3 +10,10 @@
 | 006 | [Create debug-retry-loop skill file](006-create-debug-retry-loop-skill.md) | high |
 | 007 | [Update task-delegation-engineering-workflow to reference debug-retry loop](007-update-engineering-workflow-debug-retry.md) | high |
 | 008 | [Update AGENTS.md skill reference table](008-update-agents-md-skill-table.md) | medium |
+| 009 | [Create agent-handoff-schemas Skill](009-create-agent-handoff-schemas-skill.md) | high |
+| 010 | [Add Output Format Section to Test Engineer Agent](010-add-output-format-to-test-engineer.md) | medium |
+| 011 | [Add Output Format Section to Software Engineer Agent](011-add-output-format-to-software-engineer.md) | medium |
+| 012 | [Add Output Format Section to Code Reviewer Agent](012-add-output-format-to-code-reviewer.md) | medium |
+| 013 | [Add Output Format Section to Acceptance Tester Agent](013-add-output-format-to-acceptance-tester.md) | medium |
+| 014 | [Update Engineering Workflow Skill for Structured Handoffs](014-update-engineering-workflow-structured-handoffs.md) | high |
+| 015 | [Add agent-handoff-schemas Row to AGENTS.md Skill Table](015-update-agents-md-handoff-schemas-row.md) | low |

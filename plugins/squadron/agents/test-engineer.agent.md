@@ -52,6 +52,28 @@ Provide a summary:
 - Any criteria that could not be automatically tested, with explanation
 - Total test count and pass/fail status
 
+## Output Format
+
+See the `agent-handoff-schemas` skill for the full schema definition.
+
+After the prose report, produce a `TestResults` structured block:
+
+```json agent-handoff
+{
+  "files_created": ["<repo-relative path>", "..."],
+  "tests_written": [
+    {
+      "name": "<exact test name as shown in the test runner>",
+      "criterion": "<the acceptance criterion this test verifies>",
+      "file": "<repo-relative path of the file containing this test>"
+    }
+  ],
+  "framework": "<testing framework used>"
+}
+```
+
+Required fields: `files_created`, `tests_written` (with `name`, `criterion`, and `file` per entry), and `framework`.
+
 # Quality Standards
 
 - Tests must be deterministic — no reliance on timing, external services, or random data

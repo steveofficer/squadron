@@ -123,6 +123,37 @@ Prioritized list of what the engineer must fix:
 
 If the verdict is **PASS**, omit the Rework Instructions section.
 
+## Output Format
+
+The Markdown review report (`## Code Review — Iteration N of 4` block) must be kept completely unchanged — do not alter its structure, headings, or content.
+
+See the `agent-handoff-schemas` skill for the full schema definition.
+
+After the prose report, append a `ReviewVerdict` structured block:
+
+```json agent-handoff
+{
+  "verdict": "PASS | REWORK",
+  "findings": [
+    {
+      "severity": "blocking | minor",
+      "file": "<repo-relative path of the affected file>",
+      "issue": "<description of what is wrong>",
+      "suggestion": "<concrete action the Software Engineer should take>"
+    }
+  ]
+}
+```
+
+Required fields: `verdict` (`"PASS"` or `"REWORK"`) and `findings` (array, empty when verdict is `"PASS"`).
+
+**Severity mapping:**
+
+| Value | Covers |
+|-------|--------|
+| `"blocking"` | Confirmed Issues and Show-Stoppers |
+| `"minor"` | Likely Issues, Potential Issues, and Nitpicks |
+
 # Delegation Guidelines
 
 When invoking sub-reviewers, provide a focused prompt containing:
