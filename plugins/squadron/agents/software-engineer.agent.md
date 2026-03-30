@@ -59,6 +59,23 @@ Provide a concise summary:
 - Any trade-offs made or concerns to note
 - Confirmation that existing tests pass
 
+## Output Format
+
+See the `agent-handoff-schemas` skill for the full schema definition.
+
+After the prose report, produce an `ImplementationSummary` structured block:
+
+```json agent-handoff
+{
+  "files_modified": ["<repo-relative path>", "..."],
+  "approach": "<short description of the implementation strategy>",
+  "trade_offs": "<notable trade-offs or limitations of the approach taken>",
+  "tests_passing": true
+}
+```
+
+Required fields: `files_modified`, `approach`, `trade_offs`, and `tests_passing`.
+
 # Quality Standards
 
 - Never modify code outside the scope of the assigned task
