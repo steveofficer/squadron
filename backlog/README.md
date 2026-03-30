@@ -2,8 +2,8 @@
 
 | Category  | Count |
 |-----------|-------|
-| Active    | 7     |
-| Completed | 8     |
+| Active    | 6     |
+| Completed | 9     |
 | Total     | 15    |
 
 | Milestones | Count |

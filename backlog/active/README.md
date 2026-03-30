@@ -19,7 +19,6 @@ Tasks with no mutual dependencies that can execute concurrently (max 3 per batch
 
 | # | Task | Milestone | Priority | Status | Dependencies |
 |---|------|-----------|----------|--------|--------------|
-| 009 | [Create agent-handoff-schemas Skill](009-create-agent-handoff-schemas-skill.md) | M2 | high | pending | None |
 | 010 | [Add Output Format Section to Test Engineer Agent](010-add-output-format-to-test-engineer.md) | M2 | medium | pending | 009 |
 | 011 | [Add Output Format Section to Software Engineer Agent](011-add-output-format-to-software-engineer.md) | M2 | medium | pending | 009 |
 | 012 | [Add Output Format Section to Code Reviewer Agent](012-add-output-format-to-code-reviewer.md) | M2 | medium | pending | 009 |
