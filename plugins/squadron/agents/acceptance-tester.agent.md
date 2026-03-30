@@ -62,6 +62,27 @@ Return a structured summary:
 - Per-criterion results with evidence
 - Any observations or concerns (even if all criteria pass)
 
+## Output Format
+
+After the prose report, emit a structured handoff block. See the `agent-handoff-schemas` skill for the full schema definition and delimiter conventions.
+
+Produce an `AcceptanceReport` block using the ` ```json agent-handoff ` / ` ``` ` delimiter convention:
+
+```json agent-handoff
+{
+  "AcceptanceReport": {
+    "overall": "PASS or FAIL",
+    "criteria": [
+      {
+        "text": "The acceptance criterion text",
+        "result": "PASS or FAIL",
+        "evidence": "Brief description of the evidence or failure reason"
+      }
+    ]
+  }
+}
+```
+
 # Quality Standards
 
 - Be thorough but objective — report facts, not opinions

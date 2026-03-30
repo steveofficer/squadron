@@ -2,14 +2,14 @@
 
 | Category  | Count |
 |-----------|-------|
-| Active    | 3     |
-| Completed | 12    |
+| Active    | 0     |
+| Completed | 15    |
 | Total     | 15    |
 
 | Milestones | Count |
 |------------|-------|
-| Active     | 1     |
-| Completed  | 1     |
+| Active     | 0     |
+| Completed  | 2     |
 | Total      | 2     |
 
 - [Active Tasks](active/README.md)
